@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestionDocente.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestionDocente.API", "GestionDocente.API\GestionDocente.API.csproj", "{11EEA8CC-FD75-4725-8DD4-7D0BEC26FCBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestionDocente.MVCAspNetCoreApp", "GestionDocente.MVCAspNetCoreApp\GestionDocente.MVCAspNetCoreApp.csproj", "{BDC23AFB-D5F6-458B-98EF-84431E6440F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{11EEA8CC-FD75-4725-8DD4-7D0BEC26FCBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11EEA8CC-FD75-4725-8DD4-7D0BEC26FCBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11EEA8CC-FD75-4725-8DD4-7D0BEC26FCBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDC23AFB-D5F6-458B-98EF-84431E6440F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDC23AFB-D5F6-458B-98EF-84431E6440F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDC23AFB-D5F6-458B-98EF-84431E6440F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDC23AFB-D5F6-458B-98EF-84431E6440F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +50,7 @@ Global
 		{3D09D738-0BAB-466E-9D2A-159465CFE33A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{F0044398-1556-4988-A142-EDEE9495A96A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{11EEA8CC-FD75-4725-8DD4-7D0BEC26FCBD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{BDC23AFB-D5F6-458B-98EF-84431E6440F8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A25C806C-F657-4774-9CF5-63FE975FDC2A}

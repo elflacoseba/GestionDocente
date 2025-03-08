@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="es-ar">
+
+<head>
+    @await Html.PartialAsync("~/Views/Shared/_head-page-meta.cshtml")
+    @await RenderSectionAsync("styles", required: false)
+    @await Html.PartialAsync("~/Views/Shared/_head-css.cshtml")
+</head>
+<!-- [Head] end -->
+<!-- [Body] Start -->
+<body data-pc-preset="@TempData["PresetTheme"]" data-pc-sidebar-caption="@TempData["CaptionShow"]" data-pc-direction="@TempData["SetRtlLayout"]" data-pc-theme_contrast="@TempData["ThemeContrast"]" data-pc-theme="@TempData["SetDarkLayout"]">
+    @await Html.PartialAsync("~/Views/Shared/_layout-vertical.cshtml")
+
+    <!-- [ Main Content ] start -->
+    <div class="pc-container">
+        <div class="pc-content">
+            @RenderBody()
+        </div>
+    </div>
+    <!-- [ Main Content ] end -->
+    @await Html.PartialAsync("~/Views/Shared/_footer-block.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/_footer-js.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/_customizer.cshtml")
+    @await RenderSectionAsync("scripts", required: false)
+
+</body>
+<!-- [Body] end -->
+</html>

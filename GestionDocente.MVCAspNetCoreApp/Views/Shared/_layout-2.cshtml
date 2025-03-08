@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- [Head] start -->
+<head>
+    @Html.Partial("~/Views/Shared/_head-page-meta.cshtml")
+    @RenderSection("styles", required: false)
+    @Html.Partial("~/Views/Shared/_head-css.cshtml")
+</head>
+<!-- [Head] end -->
+<!-- [Body] Start -->
+<body  class="layout-2 preset-1" data-pc-preset="@TempData["PresetTheme"]" data-pc-sidebar-caption="@TempData["CaptionShow"]" data-pc-direction="@TempData["SetRtlLayout"]" data-pc-theme_contrast="@TempData["ThemeContrast"]" data-pc-theme="@TempData["SetDarkLayout"]">
+    @Html.Partial("~/Views/Shared/_loader.cshtml")
+    @Html.Partial("~/Views/Shared/_topbar.cshtml")
+    @Html.Partial("./_sidebar.cshtml")
+
+    <!-- [ Main Content ] start -->
+    <div class="pc-container">
+        <div class="pc-content">
+            @RenderBody()
+        </div>
+    </div>
+    <!-- [ Main Content ] end -->
+    @Html.Partial("~/Views/Shared/_footer-block.cshtml")
+    @Html.Partial("~/Views/Shared/_footer-js.cshtml")
+    @Html.Partial("~/Views/Shared/_customizer.cshtml")
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (document.querySelector('.pc-sidebar .m-header .logo-lg')) {
+                document.querySelector('.pc-sidebar .m-header .logo-lg').setAttribute('src', '../assets/images/logo-white.svg');
+                document.querySelector('body').classList.add('preset-1');
+            }
+        });
+    </script>
+    @await RenderSectionAsync("scripts", required: false)
+
+</body>
+<!-- [Body] end -->
+</html>

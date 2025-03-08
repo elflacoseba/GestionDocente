@@ -1,0 +1,26 @@
+<!-- =============================================================== -->
+<!-- ----------------   Able Pro Theme Configuration  ----------------->
+<!-- =============================================================== -->
+@{
+  TempData["ThemeContrast"] = "false"; // [ false , true ]
+  TempData["CaptionShow"] = "true"; // [ false , true ]
+  TempData["PresetTheme"] = "preset-1"; // [ preset-1 to preset-10 ]
+  TempData["DarkLayout"] = "false"; // [ false , true , default ]
+  TempData["RtlLayout"] = "false"; // [ false , true ]
+  TempData["BoxContainer"] = "false"; // [ false , true ]
+  TempData["version"] = "v1.5.0"; // [ false , true ]
+}
+<!-- =============================================================== -->
+
+@{
+  if(TempData["RtlLayout"].ToString() == "true"){
+    TempData["SetRtlLayout"] = "rtl";
+  } else{
+    TempData["SetRtlLayout"] = "ltr";
+  }
+  if(TempData["DarkLayout"].ToString() == "true"){
+    TempData["SetDarkLayout"] = "dark";
+  } else{
+    TempData["SetDarkLayout"] = "light";
+  }
+}

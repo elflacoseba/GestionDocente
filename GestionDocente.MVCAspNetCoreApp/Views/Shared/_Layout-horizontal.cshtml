@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<!-- [Head] start -->
+<head>
+    @Html.Partial("~/Views/Shared/_head-page-meta.cshtml")
+    @Html.Partial("~/Views/Shared/_head-css.cshtml")
+    @RenderSection("styles", required: false)
+</head>
+<!-- [Head] end -->
+<!-- [Body] Start -->
+<body data-pc-preset="@TempData["PresetTheme"]" data-pc-sidebar-caption="@TempData["CaptionShow"]" data-pc-direction="@TempData["SetRtlLayout"]" data-pc-theme_contrast="@TempData["ThemeContrast"]" data-pc-theme="@TempData["SetDarkLayout"]">
+    @Html.Partial("~/Views/Shared/_layout-vertical.cshtml")
+
+    <!-- [ Main Content ] start -->
+    <div class="pc-container">
+        <div class="pc-content">
+            @RenderBody()
+        </div>
+    </div>
+    <!-- [ Main Content ] end -->
+    @Html.Partial("~/Views/Shared/_footer-block.cshtml")
+    @Html.Partial("~/Views/Shared/_footer-js.cshtml")
+    @Html.Partial("~/Views/Shared/_customizer.cshtml")
+    <script src="../assets/js/layout-horizontal.js"></script>
+    @await RenderSectionAsync("scripts", required: false)
+
+</body>
+<!-- [Body] end -->
+</html>
