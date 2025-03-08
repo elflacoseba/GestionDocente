@@ -1,13 +1,20 @@
 
+using GestionDocente.Application.Extensions;
+using GestionDocente.Infrastructure.Extensions;
+
 namespace GestionDocente.API
 {
-    public class Program
+    public static class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var configuration = builder.Configuration;
 
             // Add services to the container.
+
+            builder.Services.AddApplicationLayer(configuration);
+            builder.Services.AddInfrastructureLayer(configuration);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -30,7 +37,7 @@ namespace GestionDocente.API
 
             app.MapControllers();
 
-            app.Run();
+            await app.RunAsync();
         }
     }
 }

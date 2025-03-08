@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>298a4399-7e31-4830-a941-b39e831355ba</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,11 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\GestionDocente.Application\GestionDocente.Application.csproj" />
+    <ProjectReference Include="..\GestionDocente.Infrastructure\GestionDocente.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
