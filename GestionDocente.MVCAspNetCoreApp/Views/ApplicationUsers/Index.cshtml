@@ -28,8 +28,7 @@
                                 <th>Nombre</th>
                                 <th>Teléfono</th>
                                 <th>E-mail</th>
-                                <th>Estado</th>
-                                <th></th>
+                                <th>Estado</th>                                
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -48,11 +47,8 @@
                                         </div>
                                     </td>
                                     <td>@user.PhoneNumber</td>
-                                    <td><a href="mailto:@user.Email">@user.Email</a></td>
-                                    <td class="@(user.IsActive ? "text-success" : "text-danger")"><i class="fas fa-circle f-10 m-r-10"></i> @(user.IsActive ? "Desbloqueado" : "Bloqueado")</td>
-                                    <td></td>
-                                    @*  <td>@user.StartDate.ToString("yyyy/MM/dd") <span class="text-muted text-sm d-block">@user.StartDate.ToString("hh:mm tt")</span></td>                                    
-                                    <td><span class="badge text-bg-@(user.Plan == "Casual" ? "success" : "secondary")">@user.Plan</span></td> *@
+                                    <td><a href="mailto:@user.Email" title="Clic para enviarle un e-mail." >@user.Email</a></td>
+                                    <td class="@(user.IsActive ? "text-success" : "text-danger")"><i class="fas fa-circle f-10 m-r-10"></i> @(user.IsActive ? "Desbloqueado" : "Bloqueado")</td>                                    
                                     <td>
                                         <a href="@Url.Action("Details", new { id = user.Id })" class="avtar avtar-xs btn-link-secondary" title="Detalles">
                                             <i class="ti ti-eye f-20"></i>
