@@ -12,10 +12,13 @@ namespace GestionDocente.MVCAspNetCoreApp.Models
 
         public string? FirstName { get; set; }
 
-        public string? LastName { get; set; }        
+        public string? LastName { get; set; }
         
         public string FullName => $"{FirstName} {LastName}".Trim();
-                
+
+        public bool IsActive { get; set; }
+
+
         public ApplicationUser()
         {
             

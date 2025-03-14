@@ -79,6 +79,20 @@
         /// <value>Verdadero si el usuario podría ser bloqueado, de lo contrario, falso.</value>
         public bool LockoutEnabled { get; set; }
 
+        public bool IsActive
+        {
+            get
+            {
+                if (LockoutEnd == null || LockoutEnd.Value.UtcDateTime <= DateTime.UtcNow)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+            
+            
         /// <summary>
         /// Obtiene o establece el número de intentos fallidos de inicio de sesión para el usuario actual.
         /// </summary>

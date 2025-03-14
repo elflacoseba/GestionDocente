@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "Listado de Usuarios";
-    ViewBag.BreadcrumbItemActive = "Listado";
+    ViewBag.BreadcrumbItemActive = "Listado de usuarios";
     ViewBag.BreadcrumItem = "Usuarios";
 }
 @section styles {
@@ -18,7 +18,7 @@
     <div class="col-12">
         <div class="card table-card">
             <div class="card-header">
-                <h5>Membership list</h5>
+                <h5>Listado de usuarios</h5>
             </div>
             <div class="card-body pt-3">
                 <div class="table-responsive">
@@ -28,9 +28,9 @@
                                 <th>Nombre</th>
                                 <th>Teléfono</th>
                                 <th>E-mail</th>
+                                <th>Estado</th>
                                 <th></th>
-                                <th></th>
-                                <th></th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -40,7 +40,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0">
-                                               @*  <img src="@user.AvatarUrl" alt="" class="img-radius wid-40"> *@
+                                                @*  <img src="@user.AvatarUrl" alt="" class="img-radius wid-40"> *@
                                             </div>
                                             <div class="flex-grow-1 ms-3">
                                                 <h6 class="mb-0">@user.FullName</h6>
@@ -48,20 +48,19 @@
                                         </div>
                                     </td>
                                     <td>@user.PhoneNumber</td>
-                                    <td>@user.Email</td>
+                                    <td><a href="mailto:@user.Email">@user.Email</a></td>
+                                    <td class="@(user.IsActive ? "text-success" : "text-danger")"><i class="fas fa-circle f-10 m-r-10"></i> @(user.IsActive ? "Desbloqueado" : "Bloqueado")</td>
                                     <td></td>
-                                    <td></td>
-                                   @*  <td>@user.StartDate.ToString("yyyy/MM/dd") <span class="text-muted text-sm d-block">@user.StartDate.ToString("hh:mm tt")</span></td>
-                                    <td class="@(user.IsActive ? "text-success" : "text-danger")"><i class="fas fa-circle f-10 m-r-10"></i> @(user.IsActive ? "Active" : "Inactive")</td>
+                                    @*  <td>@user.StartDate.ToString("yyyy/MM/dd") <span class="text-muted text-sm d-block">@user.StartDate.ToString("hh:mm tt")</span></td>                                    
                                     <td><span class="badge text-bg-@(user.Plan == "Casual" ? "success" : "secondary")">@user.Plan</span></td> *@
                                     <td>
-                                        <a href="@Url.Action("Details", new { id = user.Id })" class="avtar avtar-xs btn-link-secondary">
+                                        <a href="@Url.Action("Details", new { id = user.Id })" class="avtar avtar-xs btn-link-secondary" title="Detalles">
                                             <i class="ti ti-eye f-20"></i>
                                         </a>
-                                        <a href="@Url.Action("Edit", new { id = user.Id })" class="avtar avtar-xs btn-link-secondary">
+                                        <a href="@Url.Action("Edit", new { id = user.Id })" class="avtar avtar-xs btn-link-secondary" title="Editar">
                                             <i class="ti ti-edit f-20"></i>
                                         </a>
-                                        <a href="@Url.Action("Delete", new { id = user.Id })" class="avtar avtar-xs btn-link-secondary">
+                                        <a href="@Url.Action("Delete", new { id = user.Id })" class="avtar avtar-xs btn-link-secondary" title="Eliminar">
                                             <i class="ti ti-trash f-20"></i>
                                         </a>
                                     </td>
@@ -79,7 +78,20 @@
     <!-- [Page Specific JS] start -->
     <script type="module">
         import {DataTable} from "../assets/js/plugins/module.js"
-        window.dt = new DataTable("#pc-dt-simple");
+        window.dt = new DataTable("#pc-dt-simple", {
+            searchable: true,
+            labels: {
+                        placeholder: "Buscar...",
+                        searchTitle: "Buscar dentro de la tabla",
+                        pageTitle: "Página {page}",
+                        perPage: "registros por página",
+                        noRows: "No se encontraron registros",
+                        info: "Mostrando del {start} al {end} de {rows} registros",
+                        noResults: "No se encontraron resultados para su búsqueda",
+        }
+        });
+
+
     </script>
     <!-- [Page Specific JS] end -->
 }
