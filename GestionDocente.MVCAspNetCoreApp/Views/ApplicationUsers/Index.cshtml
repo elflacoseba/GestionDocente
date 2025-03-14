@@ -1,0 +1,85 @@
+﻿@model IEnumerable<ApplicationUser>
+
+@{
+    ViewBag.Title = "Listado de Usuarios";
+    ViewBag.BreadcrumbItemActive = "Listado";
+    ViewBag.BreadcrumItem = "Usuarios";
+}
+@section styles {
+    <!-- [Page specific CSS] start -->
+    <link rel="stylesheet" href="../assets/css/plugins/style.css">
+    <!-- [Page specific CSS] end -->
+}
+
+@await Html.PartialAsync("~/Views/Shared/_breadcrumb.cshtml")
+
+<!-- [ Main Content ] start -->
+<div class="row">
+    <div class="col-12">
+        <div class="card table-card">
+            <div class="card-header">
+                <h5>Membership list</h5>
+            </div>
+            <div class="card-body pt-3">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="pc-dt-simple">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Teléfono</th>
+                                <th>E-mail</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0">
+                                               @*  <img src="@user.AvatarUrl" alt="" class="img-radius wid-40"> *@
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="mb-0">@user.FullName</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@user.PhoneNumber</td>
+                                    <td>@user.Email</td>
+                                    <td></td>
+                                    <td></td>
+                                   @*  <td>@user.StartDate.ToString("yyyy/MM/dd") <span class="text-muted text-sm d-block">@user.StartDate.ToString("hh:mm tt")</span></td>
+                                    <td class="@(user.IsActive ? "text-success" : "text-danger")"><i class="fas fa-circle f-10 m-r-10"></i> @(user.IsActive ? "Active" : "Inactive")</td>
+                                    <td><span class="badge text-bg-@(user.Plan == "Casual" ? "success" : "secondary")">@user.Plan</span></td> *@
+                                    <td>
+                                        <a href="@Url.Action("Details", new { id = user.Id })" class="avtar avtar-xs btn-link-secondary">
+                                            <i class="ti ti-eye f-20"></i>
+                                        </a>
+                                        <a href="@Url.Action("Edit", new { id = user.Id })" class="avtar avtar-xs btn-link-secondary">
+                                            <i class="ti ti-edit f-20"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", new { id = user.Id })" class="avtar avtar-xs btn-link-secondary">
+                                            <i class="ti ti-trash f-20"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- [ Main Content ] end -->
+@section scripts {
+    <!-- [Page Specific JS] start -->
+    <script type="module">
+        import {DataTable} from "../assets/js/plugins/module.js"
+        window.dt = new DataTable("#pc-dt-simple");
+    </script>
+    <!-- [Page Specific JS] end -->
+}

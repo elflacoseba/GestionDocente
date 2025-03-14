@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GestionDocente.Application.Interfaces;
 using GestionDocente.Application.Dtos.Request;
-using GestionDocente.API.Models.Errors;
 
 namespace GestionDocente.SecureIAM_API.Controllers
 {

@@ -1,4 +1,9 @@
-using System.Threading.Tasks;
+using GestionDocente.MVCAspNetCoreApp.Interfaces;
+using GestionDocente.MVCAspNetCoreApp.Services;
+using Polly;
+using Polly.Extensions.Http;
+
+using System.Net.Http.Headers;
 
 namespace GestionDocente.MVCAspNetCoreApp
 {
@@ -10,6 +15,36 @@ namespace GestionDocente.MVCAspNetCoreApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            // Registrar IUserService
+            builder.Services.AddScoped<IUserService, UserService>();
+
+
+            builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]!);
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+            })
+.AddPolicyHandler(GetRetryPolicy())
+.AddPolicyHandler(GetCircuitBreakerPolicy());
+
+            // Políticas de resiliencia
+            static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+            {
+                return HttpPolicyExtensions
+                    .HandleTransientHttpError()
+                    .Or<TimeoutException>()
+                    .WaitAndRetryAsync(3, retryAttempt =>
+                        TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+            }
+
+            static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
+            {
+                return HttpPolicyExtensions
+                    .HandleTransientHttpError()
+                    .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
+            }
 
             var app = builder.Build();
 
