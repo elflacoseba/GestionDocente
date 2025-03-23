@@ -47,7 +47,7 @@ namespace GestionDocente.Application.Services
             return await _roleRepository.RoleExistsAsync(roleName);
         }
 
-        public async Task<bool> CreateRoleAsync(CreateApplicationRoleRequestDto role)
+        public async Task<string> CreateRoleAsync(CreateApplicationRoleRequestDto role)
         {
             
             var rules = new CreateApplicationRoleRequestDtoValidator(_roleRepository);
@@ -66,9 +66,12 @@ namespace GestionDocente.Application.Services
             return await _roleRepository.CreateRoleAsync(roleEntity);
         }
 
-        public async Task<bool> UpdateRoleAsync(UpdateApplicationRoleRequestDto role)
+        public async Task<bool> UpdateRoleAsync(string roleId, UpdateApplicationRoleRequestDto role)
         {
             var validationUpdateRules = new UpdateApplicationRoleRequestDtoValidator(_roleRepository);
+
+            //paso el Id al Dto para que pueda ser validado
+            role.SetId(roleId);
 
             var validationResult = await validationUpdateRules.ValidateAsync(role);
 
@@ -80,7 +83,9 @@ namespace GestionDocente.Application.Services
             }
 
             var roleEntity = _mapper.Map<ApplicationRole>(role);
-        
+
+            roleEntity.Id = roleId;
+
             return await _roleRepository.UpdateRoleAsync(roleEntity);
         }
 

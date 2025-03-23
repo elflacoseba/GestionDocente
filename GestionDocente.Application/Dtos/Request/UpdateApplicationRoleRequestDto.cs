@@ -2,8 +2,18 @@
 {
     public class UpdateApplicationRoleRequestDto
     {
-        public string? Id { get; set; }
+        private string? _Id;
         public string? Name { get; set; }
         public string? Description { get; set; }
+
+        public void SetId(string? id)
+        {
+            _Id = id;
+        }
+
+        public string? GetId()
+        {
+            return _Id;
+        }
     }
 }

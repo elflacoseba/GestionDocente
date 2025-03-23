@@ -8,7 +8,7 @@ namespace GestionDocente.Domain.Interfaces
         Task<ApplicationRole?> GetRoleByIdAsync(string roleId);
         Task<ApplicationRole?> GetRoleByNameAsync(string roleName);
         Task<bool> RoleExistsAsync(string roleName);
-        Task<bool> CreateRoleAsync(ApplicationRole role);
+        Task<string> CreateRoleAsync(ApplicationRole role);
         Task<bool> UpdateRoleAsync(ApplicationRole role);
         Task<bool> DeleteRoleAsync(string roleId);
     }

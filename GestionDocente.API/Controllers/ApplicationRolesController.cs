@@ -2,6 +2,7 @@
 using GestionDocente.Application.Interfaces;
 using GestionDocente.Application.Dtos.Request;
 using GestionDocente.API.Models.Errors;
+using GestionDocente.Application.Dtos.Response;
 
 namespace GestionDocente.SecureIAM_API.Controllers
 {
@@ -17,19 +18,18 @@ namespace GestionDocente.SecureIAM_API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]        
-        public async Task<IActionResult> Index()
+        [ProducesResponseType<IEnumerable<RoleResponseDto>>(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<RoleResponseDto>>> Index()
         {
             var roles = await _roleService.GetRolesAsync();
 
             return Ok(roles);
         }
-        
-        [HttpGet]
-        [Route("GetRoleById")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]       
-        public async Task<IActionResult> GetRoleById(string roleId)
+
+        [HttpGet("GetRoleById/{roleId}", Name = "GetRoleById")]
+        [ProducesResponseType<RoleResponseDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<RoleResponseDto>> GetRoleById(string roleId)
         {
             var user = await _roleService.GetRoleByIdAsync(roleId);
 
@@ -43,11 +43,10 @@ namespace GestionDocente.SecureIAM_API.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("GetRoleByName")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]        
-        public async Task<IActionResult> GetRoleByName(string roleName)
+        [HttpGet("GetRoleByName/{roleName}", Name = "GetRoleByName")]
+        [ProducesResponseType<RoleResponseDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<RoleResponseDto>> GetRoleByName(string roleName)
         {
             var user = await _roleService.GetRoleByNameAsync(roleName);
 
@@ -61,11 +60,10 @@ namespace GestionDocente.SecureIAM_API.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("RoleExists")]
+        [HttpPost("RoleExists/{roleName}", Name = "RoleExists")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> RoleExists(string roleName)
+        public async Task<ActionResult> RoleExists(string roleName)
         {
             var result = await _roleService.RoleExistsAsync(roleName);
 
@@ -76,20 +74,21 @@ namespace GestionDocente.SecureIAM_API.Controllers
             else
             {
                 return NotFound("El rol no existe.");
-            }            
+            }
         }
 
         [HttpPost]
         [Route("CreateRole")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesErrorResponseType(typeof(ValidationErrorResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateRole(CreateApplicationRoleRequestDto role)
+        public async Task<ActionResult> CreateRole(CreateApplicationRoleRequestDto role)
         {
             var result = await _roleService.CreateRoleAsync(role);
-            if (result)
+
+            if (!string.IsNullOrEmpty(result))
             {
-                return Ok("Rol creado correctamente.");
+                return CreatedAtRoute("GetRoleById", new { roleId = result }, role);
             }
             else
             {
@@ -97,25 +96,24 @@ namespace GestionDocente.SecureIAM_API.Controllers
             }
         }
 
-        [HttpPatch]
-        [Route("UpdateRole")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPut("{roleId}")]        
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateRole(UpdateApplicationRoleRequestDto role)
+        public async Task<ActionResult> UpdateRole(string roleId, UpdateApplicationRoleRequestDto role)
         {
-            var userDB = await _roleService.GetRoleByIdAsync(role.Id!);
+            var userDB = await _roleService.GetRoleByIdAsync(roleId);
 
             if (userDB == null)
             {
                 return NotFound("Rol no encontrado.");
-            }
+            }            
 
-            var result = await _roleService.UpdateRoleAsync(role);
+            var result = await _roleService.UpdateRoleAsync(roleId, role);
 
             if (result)
             {
-                return Ok("Rol modificado correctamente.");
+                return NoContent();
             }
             else
             {
@@ -123,12 +121,11 @@ namespace GestionDocente.SecureIAM_API.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("DeleteRole")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpDelete("{roleId}")]        
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteRole(string roleId)
+        public async Task<ActionResult> DeleteRole(string roleId)
         {
             var role = await _roleService.GetRoleByIdAsync(roleId);
 
@@ -141,7 +138,7 @@ namespace GestionDocente.SecureIAM_API.Controllers
 
             if (result)
             {
-                return Ok("Rol eliminado correctamente.");
+                return NoContent();
             }
             else
             {
