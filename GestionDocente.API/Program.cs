@@ -1,6 +1,7 @@
 
 using GestionDocente.Application.Extensions;
 using GestionDocente.Infrastructure.Extensions;
+using GestionDocente.WebAPI.Middlewares;
 
 namespace GestionDocente.API
 {
@@ -12,16 +13,19 @@ namespace GestionDocente.API
             var configuration = builder.Configuration;
 
             // Add services to the container.
-
             builder.Services.AddApplicationLayer(configuration);
             builder.Services.AddInfrastructureLayer(configuration);
 
             builder.Services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            //Middlewares
+            app.UseMiddleware<ValidationExceptionMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

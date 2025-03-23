@@ -5,11 +5,11 @@ using System.Text.Json;
 
 namespace GestionDocente.WebAPI.Middlewares
 {
-    public class ExceptionMiddleware
+    public class ValidationExceptionMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public ExceptionMiddleware(RequestDelegate next)
+        public ValidationExceptionMiddleware(RequestDelegate next)
         {
             _next = next;
         }
