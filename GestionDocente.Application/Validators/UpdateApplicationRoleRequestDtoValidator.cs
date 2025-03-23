@@ -23,7 +23,7 @@ namespace GestionDocente.Application.Validators
                {
                    var roleEntity = await _roleRepository.GetRoleByNameAsync(roleName!);
                    
-                   if (roleEntity != null && roleEntity.Id != role.Id)
+                   if (roleEntity != null && roleEntity.Id != role.GetId())
                    {
                        return false;
                    }

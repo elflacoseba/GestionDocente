@@ -61,13 +61,18 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
             return await _roleManager.RoleExistsAsync(roleName);
         }
 
-        public async Task<bool> CreateRoleAsync(ApplicationRole role)
+        public async Task<string> CreateRoleAsync(ApplicationRole role)
         {
             var roleModel = _mapper.Map<ApplicationRoleModel>(role);
 
             var result = await _roleManager.CreateAsync(roleModel);
 
-            return result.Succeeded;
+            if (result.Succeeded)
+            {
+                return roleModel.Id;
+            }
+
+            return string.Empty;
         }
 
         public async Task<bool> UpdateRoleAsync(ApplicationRole role)
