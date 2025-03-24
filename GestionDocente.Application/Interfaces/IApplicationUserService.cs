@@ -11,8 +11,8 @@ namespace GestionDocente.Application.Interfaces
         Task<UserResponseDto?> GetUserByUsernameAsync(string username);
         Task<UserResponseDto?> GetUserByIdAsync(string userId);
         Task<UserResponseDto?> GetUserByEmailAsync(string email);
-        Task<bool> CreateUserAsync(CreateApplicationUserRequestDto user);
-        Task<bool> UpdateUserAsync(UpdateApplicationUserRequestDto user);
+        Task<string> CreateUserAsync(CreateApplicationUserRequestDto user);
+        Task<bool> UpdateUserAsync(string userId, UpdateApplicationUserRequestDto user);
         Task<bool> DeleteUserAsync(string userId);
         
         #endregion

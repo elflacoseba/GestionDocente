@@ -63,13 +63,18 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
             return _mapper.Map<ApplicationUser>(userModel);
         }
 
-        public async Task<bool> CreateUserAsync(ApplicationUser user, string password)
+        public async Task<string> CreateUserAsync(ApplicationUser user, string password)
         {
             var userModel = _mapper.Map<ApplicationUserModel>(user);
 
             var result = await _userManager.CreateAsync(userModel, password);
-            
-            return result.Succeeded;
+
+            if (result.Succeeded)
+            {
+                return userModel.Id;
+            }
+
+            return string.Empty;
         }
 
         public async Task<bool> UpdateUserAsync(ApplicationUser user)

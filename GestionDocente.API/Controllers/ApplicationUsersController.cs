@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GestionDocente.Application.Interfaces;
 using GestionDocente.Application.Dtos.Request;
+using GestionDocente.Application.Dtos.Response;
+using GestionDocente.API.Models.Errors;
 
 namespace GestionDocente.SecureIAM_API.Controllers
 {
@@ -18,19 +20,18 @@ namespace GestionDocente.SecureIAM_API.Controllers
         #region Users
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]        
-        public async Task<IActionResult> Index()
+        [ProducesResponseType<IEnumerable<UserResponseDto>>(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<UserResponseDto>>> Index()
         {
             var users = await _userService.GetUsersAsync();
 
             return Ok(users);
         }
 
-        [HttpGet]
-        [Route("GetUserById")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]        
-        public async Task<IActionResult> GetUserById(string id)
+        [HttpGet("GetUserById/{id}", Name = "GetUserById")]
+        [ProducesResponseType<UserResponseDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<UserResponseDto>> GetUserById(string id)
         {
             var user = await _userService.GetUserByIdAsync(id);
 
@@ -44,11 +45,10 @@ namespace GestionDocente.SecureIAM_API.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("GetUserByEmail")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]        
-        public async Task<IActionResult> GetUserByEmail(string email)
+        [HttpGet("GetUserByEmail/{email}", Name = "GetUserByEmail")]
+        [ProducesResponseType<UserResponseDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<UserResponseDto>> GetUserByEmail(string email)
         {
             var user = await _userService.GetUserByEmailAsync(email);
 
@@ -64,42 +64,41 @@ namespace GestionDocente.SecureIAM_API.Controllers
 
         [HttpPost]
         [Route("CreateUser")]
-        [ProducesResponseType(StatusCodes.Status200OK)]        
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]        
-        public async Task<IActionResult> CreateUser(CreateApplicationUserRequestDto user)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesErrorResponseType(typeof(ValidationErrorResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> CreateUser(CreateApplicationUserRequestDto user)
         {
             var result = await _userService.CreateUserAsync(user);
-            
-            if (result)
+
+            if (!string.IsNullOrEmpty(result))
             {
-                return Ok("Usuario creado correctamente.");
+                return CreatedAtRoute("GetUserById", new { id = result }, user);
             }
             else
             {
-                return BadRequest("Error al crear el usuario.");                
+                return BadRequest("Error al crear el usuario.");
             }
         }
 
-        [HttpPatch]
-        [Route("UpdateUser")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPut("{userId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateUser(UpdateApplicationUserRequestDto user)
+        public async Task<ActionResult> UpdateUser(string userId, UpdateApplicationUserRequestDto user)
         {
-            var userDB = await _userService.GetUserByIdAsync(user.Id!);
+            var userDB = await _userService.GetUserByIdAsync(userId);
 
             if (userDB == null)
             {
                 return NotFound("Usuario no encontrado.");
             }
 
-            var result = await _userService.UpdateUserAsync(user);
+            var result = await _userService.UpdateUserAsync(userId, user);
 
             if (result)
             {
-                return Ok("Usuario modificado correctamente.");
+                return NoContent();
             }
             else
             {
@@ -107,12 +106,12 @@ namespace GestionDocente.SecureIAM_API.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpDelete]
         [Route("DeleteUser")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteUser(string userId)
+        public async Task<ActionResult> DeleteUser(string userId)
         {
             var user = await _userService.GetUserByIdAsync(userId);
 
@@ -125,7 +124,7 @@ namespace GestionDocente.SecureIAM_API.Controllers
 
             if (result)
             {
-                return Ok("Usuario eliminado correctamente.");
+                return NoContent();
             }
             else
             {

@@ -10,7 +10,7 @@ namespace GestionDocente.Domain.Interfaces
         Task<ApplicationUser?> GetUserByUsernameAsync(string username);
         Task<ApplicationUser?> GetUserByIdAsync(string userId);
         Task<ApplicationUser?> GetUserByEmailAsync(string email);
-        Task<bool> CreateUserAsync(ApplicationUser user, string password);
+        Task<string> CreateUserAsync(ApplicationUser user, string password);
         Task<bool> UpdateUserAsync(ApplicationUser user);
         Task<bool> DeleteUserAsync(string userId);
         

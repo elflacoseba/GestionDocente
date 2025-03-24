@@ -55,7 +55,7 @@ namespace GestionDocente.Application.Services
             return _mapper.Map<UserResponseDto>(userEntity);
         }
 
-        public async Task<bool> CreateUserAsync(CreateApplicationUserRequestDto user)
+        public async Task<string> CreateUserAsync(CreateApplicationUserRequestDto user)
         {
      
             var validationResult = await _applicationUserRequestDtoValidationRules.ValidateAsync(user);           
@@ -97,8 +97,11 @@ namespace GestionDocente.Application.Services
             return await _userRepository.CreateUserAsync(userEnity, user.Password!);
         }
 
-        public async Task<bool> UpdateUserAsync(UpdateApplicationUserRequestDto user)
+        public async Task<bool> UpdateUserAsync(string userId, UpdateApplicationUserRequestDto user)
         {
+            //paso el Id al Dto para que pueda ser validado
+            user.SetId(userId);
+
             var validationResult = await _updateApplicationUserRequestDtoValidator.ValidateAsync(user);
 
             if (!validationResult.IsValid)
@@ -113,7 +116,7 @@ namespace GestionDocente.Application.Services
             var userUsername = await _userRepository.GetUserByUsernameAsync(user.UserName!);
 
             //si obtuvo un usuario con el mismo username, valido que no sea el mismo usuario que se esta actualizando
-            if (userUsername != null && userUsername.Id != user.Id!)
+            if (userUsername != null && userUsername.Id != user.GetId())
             {
                 List<ErrorValidation> errorValidations = new List<ErrorValidation>();
 
@@ -126,7 +129,7 @@ namespace GestionDocente.Application.Services
             var userEmail = await _userRepository.GetUserByEmailAsync(user.Email!);
 
             //si obtuvo un usuario con el mismo email, valido que no sea el mismo usuario que se esta actualizando
-            if (userEmail != null && userEmail.Id != user.Id!)
+            if (userEmail != null && userEmail.Id != user.GetId())
             {
                 List<ErrorValidation> errorValidations = new List<ErrorValidation>();
 
