@@ -102,6 +102,8 @@ namespace GestionDocente.Application.Services
             //paso el Id al Dto para que pueda ser validado
             user.SetId(userId);
 
+            var validationRules = new UpdateApplicationUserRequestDtoValidator(_userRepository);
+
             var validationResult = await _updateApplicationUserRequestDtoValidator.ValidateAsync(user);
 
             if (!validationResult.IsValid)
@@ -110,33 +112,7 @@ namespace GestionDocente.Application.Services
                                              .ToList();
 
                 throw new ValidationException(errorValidations);
-            }
-
-            //Valido que no exista el username en la base de datos
-            var userUsername = await _userRepository.GetUserByUsernameAsync(user.UserName!);
-
-            //si obtuvo un usuario con el mismo username, valido que no sea el mismo usuario que se esta actualizando
-            if (userUsername != null && userUsername.Id != user.GetId())
-            {
-                List<ErrorValidation> errorValidations = new List<ErrorValidation>();
-
-                errorValidations.Add(new ErrorValidation(nameof(user.UserName), "El nombre de usuario ya existe en el sistema."));
-
-                throw new ValidationException(errorValidations);
-            }
-
-            //Valido que no exista el email en la base de datos
-            var userEmail = await _userRepository.GetUserByEmailAsync(user.Email!);
-
-            //si obtuvo un usuario con el mismo email, valido que no sea el mismo usuario que se esta actualizando
-            if (userEmail != null && userEmail.Id != user.GetId())
-            {
-                List<ErrorValidation> errorValidations = new List<ErrorValidation>();
-
-                errorValidations.Add(new ErrorValidation(nameof(user.Email), "El email ya existe en el sistema."));
-
-                throw new ValidationException(errorValidations);
-            }            
+            }           
 
             var userEntity = _mapper.Map<ApplicationUser>(user);
 
