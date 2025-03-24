@@ -11,10 +11,12 @@ namespace GestionDocente.SecureIAM_API.Controllers
     public class ApplicationUsersController : ControllerBase
     {
         public readonly IApplicationUserService _userService;
+        private readonly IApplicationRoleService _roleService;
 
-        public ApplicationUsersController(IApplicationUserService userApplication)
+        public ApplicationUsersController(IApplicationUserService userApplication, IApplicationRoleService roleService)
         {
             _userService = userApplication;
+            _roleService = roleService;
         }
 
         #region Users
@@ -137,14 +139,15 @@ namespace GestionDocente.SecureIAM_API.Controllers
         #region Roles
 
         [HttpGet]
-        [Route("GetRolesAsync")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Route("GetRolesAsync/{userId}")]
+
+        [ProducesResponseType<IList<String>>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]        
-        public async Task<IActionResult> GetRolesAsync(string userId)
+        public async Task<ActionResult<IList<String>>> GetRolesAsync(string userId)
         {
             var userRoles = await _userService.GetRolesAsync(userId);
 
-            if (userRoles != null)
+            if (userRoles?.Count > 0)
             {
                 return Ok(userRoles);
             }
@@ -152,15 +155,45 @@ namespace GestionDocente.SecureIAM_API.Controllers
             {
                 return NotFound("El usuario no está asignado a ningún rol.");
             }
+
         }
 
         [HttpPost]
-        [Route("AddToRoleAsync")]
-        [ProducesResponseType(StatusCodes.Status200OK)]        
+        [Route("AddToRoleAsync/{userId}/{roleName}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddToRoleAsync(string userId, string roleName)
+        public async Task<ActionResult> AddToRoleAsync(string userId, string roleName)
         {
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound("Usuario no encontrado.");
+            }
+
+            if (string.IsNullOrEmpty(roleName))
+            {
+                return BadRequest("El nombre del rol no puede ser nulo o vacío.");
+            }
+
+            var roleExists = await _roleService.RoleExistsAsync(roleName);
+
+            if (!roleExists)
+            {
+                return NotFound($"No existe el rol {roleName}");
+            }
+
+            //verifico si el usuario ya tiene el rol asignado
+            var userRoles = await _userService.GetRolesAsync(userId);
+
+            if (userRoles.Any(role => role.Equals(roleName, StringComparison.OrdinalIgnoreCase)))
+            {
+                return BadRequest("El usuario ya tiene asignado el rol.");
+            }
+
             var result = await _userService.AddToRoleAsync(userId, roleName);
+
             if (result)
             {
                 return Ok("Rol asignado correctamente.");
@@ -172,11 +205,25 @@ namespace GestionDocente.SecureIAM_API.Controllers
         }
 
         [HttpPost]
-        [Route("AddToRolesAsync")]
-        [ProducesResponseType(StatusCodes.Status200OK)]        
+        [Route("AddToRolesAsync/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddToRolesAsync(string userId, IEnumerable<string> roleNames)
+        public async Task<ActionResult> AddToRolesAsync(string userId,[FromBody] IEnumerable<string> roleNames)
         {
+
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound("Usuario no encontrado.");
+            }
+
+            if ((roleNames == null) || (!roleNames.Any()))
+            {
+                return BadRequest("Debe proporcionar una lista con los nombres de los roles.");
+            }
+
             var result = await _userService.AddToRolesAsync(userId, roleNames);
 
             if (result)
@@ -190,11 +237,32 @@ namespace GestionDocente.SecureIAM_API.Controllers
         }
 
         [HttpPost]
-        [Route("RemoveFromRoleAsync")]
-        [ProducesResponseType(StatusCodes.Status200OK)]        
+        [Route("RemoveFromRoleAsync/{userId}/{roleName}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> RemoveFromRoleAsync(string userId, string roleName)
+        public async Task<ActionResult> RemoveFromRoleAsync(string userId, string roleName)
         {
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound("Usuario no encontrado.");
+            }
+
+            if (string.IsNullOrEmpty(roleName))
+            {
+                return BadRequest("El nombre del rol no puede ser nulo o vacío.");
+            }
+
+            //verifico si el usuario ya tiene el rol asignado
+            var userRoles = await _userService.GetRolesAsync(userId);
+
+            if (!userRoles.Any(role => role.Equals(roleName, StringComparison.OrdinalIgnoreCase)))
+            {
+                return BadRequest("El usuario no tiene asignado el rol.");
+            }
+
             var result = await _userService.RemoveFromRoleAsync(userId, roleName);
             if (result)
             {
@@ -207,11 +275,24 @@ namespace GestionDocente.SecureIAM_API.Controllers
         }
 
         [HttpPost]
-        [Route("RemoveFromRolesAsync")]
-        [ProducesResponseType(StatusCodes.Status200OK)]        
+        [Route("RemoveFromRolesAsync/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> RemoveFromRolesAsync(string userId, IEnumerable<string> roleNames)
+        public async Task<ActionResult> RemoveFromRolesAsync(string userId,[FromBody] IEnumerable<string> roleNames)
         {
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound("Usuario no encontrado.");
+            }
+
+            if ((roleNames == null) || (!roleNames.Any()))
+            {
+                return BadRequest("Debe proporcionar una lista con los nombres de los roles.");
+            }
+
             var result = await _userService.RemoveFromRolesAsync(userId, roleNames);
             if (result)
             {
