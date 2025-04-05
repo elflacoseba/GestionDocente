@@ -4,7 +4,7 @@ using GestionDocente.Infrastructure.Models;
 
 namespace GestionDocente.Infrastructure.Persistences.Context
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUserModel, ApplicationRoleModel, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

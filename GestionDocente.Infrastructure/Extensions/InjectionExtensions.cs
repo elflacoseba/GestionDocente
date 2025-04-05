@@ -8,6 +8,7 @@ using GestionDocente.Infrastructure.Models;
 using System.Reflection;
 using GestionDocente.Domain.Interfaces;
 using GestionDocente.Infrastructure.Settings;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace GestionDocente.Infrastructure.Extensions
 {
@@ -42,7 +43,28 @@ namespace GestionDocente.Infrastructure.Extensions
                 options.User.RequireUniqueEmail = true;
             });
 
-            services.AddIdentity<ApplicationUserModel, ApplicationRoleModel>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            services.AddIdentity<ApplicationUserModel, ApplicationRoleModel>().AddDefaultTokenProviders();
+
+            // Configurar UserStore y RoleStore con AutoSaveChanges = false
+            services.AddScoped<IUserStore<ApplicationUserModel>>(provider =>
+            {
+                var context = provider.GetRequiredService<ApplicationDbContext>();
+                return new UserStore<ApplicationUserModel, ApplicationRoleModel, ApplicationDbContext, string>(context)
+                {
+                    AutoSaveChanges = false // ¡Importante!
+                };
+            });
+
+            services.AddScoped<IRoleStore<ApplicationRoleModel>>(provider =>
+            {
+                var context = provider.GetRequiredService<ApplicationDbContext>();
+                return new RoleStore<ApplicationRoleModel, ApplicationDbContext, string>(context)
+                {
+                    AutoSaveChanges = false // ¡Importante!
+                };
+            });
+
+
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddScoped<IApplicationRoleRepository, ApplicationRoleRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -1,41 +1,71 @@
 ﻿using GestionDocente.Infrastructure.Persistences.Context;
 using GestionDocente.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
+using AutoMapper;
+using GestionDocente.Infrastructure.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace GestionDocente.Infrastructure.Persistences.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private bool disposedValue;
-        private readonly ApplicationDbContext _context;                
 
-        public UnitOfWork(ApplicationDbContext context)
+        private bool disposedValue;
+        private readonly ApplicationDbContext _context;
+        private IDbContextTransaction _transaction;
+        private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUserModel> _userManager;
+        private readonly RoleManager<ApplicationRoleModel> _roleManager;
+
+        public IApplicationUserRepository ApplicationUsers { get; }
+
+        public IApplicationRoleRepository ApplicationRoles { get; }
+
+        public UnitOfWork(ApplicationDbContext context, IMapper mapper, UserManager<ApplicationUserModel> userManager, RoleManager<ApplicationRoleModel> roleManager)
+
         {
-            _context = context;            
+            _context = context;
+            _mapper = mapper;
+            _userManager = userManager;
+            _roleManager = roleManager;
+
+            ApplicationUsers = new ApplicationUserRepository(_userManager, _mapper);
+            ApplicationRoles = new ApplicationRoleRepository(_roleManager, _mapper);
         }
 
         public void BeginTransaction()
         {
-            _context.Database.BeginTransaction();
-        }
-
-        public async Task CommitTransactionAsync()
-        {            
-            await _context.Database.CommitTransactionAsync();
-        }
-
-        public async void RollbackTransaction()
-        {
-            await _context.Database.RollbackTransactionAsync();
-        }
-
-        public async Task<int> SaveChangesAsync()
-        {
-           return await _context.SaveChangesAsync();
+           _transaction = _context.Database.BeginTransaction();
         }
         
-        public int SaveChanges()
+        public async Task<bool> CommitAsync()
         {
-            return _context.SaveChanges();
+            try
+            {
+                await _context.SaveChangesAsync();
+                _transaction?.CommitAsync();
+                
+                return true;
+            }
+            catch
+            {
+                await RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                _transaction?.Dispose();
+            }
+        }
+
+        public async Task RollbackAsync()
+        {
+            if (_transaction != null)
+            {
+                await _transaction.RollbackAsync();
+                _transaction.Dispose();
+                _transaction = null;
+            }
         }
 
         protected virtual void Dispose(bool disposing)
@@ -45,6 +75,7 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
                 if (disposing)
                 {
                     // Eliminar el estado administrado (objetos administrados)
+                    _transaction?.Dispose();
                     _context.Dispose();
                 }
 
@@ -70,5 +101,7 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+        
     }
 }
