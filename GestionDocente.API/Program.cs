@@ -1,6 +1,7 @@
 
 using GestionDocente.Application.Extensions;
 using GestionDocente.Infrastructure.Extensions;
+using GestionDocente.WebAPI.Middlewares;
 
 namespace GestionDocente.API
 {
@@ -22,6 +23,8 @@ namespace GestionDocente.API
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

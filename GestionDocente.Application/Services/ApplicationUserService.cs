@@ -12,16 +12,18 @@ namespace GestionDocente.Application.Services
     public class ApplicationUserService : IApplicationUserService
     {
         private readonly IApplicationUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly CreateApplicationUserRequestDtoValidator _applicationUserRequestDtoValidationRules;
         private readonly UpdateApplicationUserRequestDtoValidator _updateApplicationUserRequestDtoValidator;
 
-        public ApplicationUserService(IApplicationUserRepository userRepository, IMapper mapper, CreateApplicationUserRequestDtoValidator applicationUserRequestDtoValidationRules, UpdateApplicationUserRequestDtoValidator updateApplicationUserRequestDtoValidator)
+        public ApplicationUserService(IApplicationUserRepository userRepository, IMapper mapper, CreateApplicationUserRequestDtoValidator applicationUserRequestDtoValidationRules, UpdateApplicationUserRequestDtoValidator updateApplicationUserRequestDtoValidator, IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _applicationUserRequestDtoValidationRules = applicationUserRequestDtoValidationRules;
             _updateApplicationUserRequestDtoValidator = updateApplicationUserRequestDtoValidator;
+            _unitOfWork = unitOfWork;
         }
 
         #region
@@ -94,7 +96,21 @@ namespace GestionDocente.Application.Services
 
             var userEnity = _mapper.Map<ApplicationUser>(user);
 
-            return await _userRepository.CreateUserAsync(userEnity, user.Password!);
+            var resultCreateUser =  await _userRepository.CreateUserAsync(userEnity, user.Password!);
+
+            if (resultCreateUser)
+            {
+                //Commit a la base de datos
+                return await _unitOfWork.CommitAsync();
+            }
+            else
+            {
+                //Rollback a la base de datos
+                await _unitOfWork.RollbackAsync();
+
+                return false;
+            }            
+                        
         }
 
         public async Task<bool> UpdateUserAsync(UpdateApplicationUserRequestDto user)
