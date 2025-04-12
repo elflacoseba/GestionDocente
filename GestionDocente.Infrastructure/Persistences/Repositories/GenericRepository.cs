@@ -64,13 +64,9 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
             }
         }
 
-        public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> SearchAsync(Expression<Func<TModel, bool>> predicate)
         {
-            // Map the predicate from TEntity to TModel
-            var modelPredicate = _mapper.Map<Expression<Func<TModel, bool>>>(predicate);
-
-            // Perform the query using the mapped predicate
-            var models = await _dbSet.AsNoTracking().Where(modelPredicate).ToListAsync();
+            var models = await _dbSet.AsNoTracking().Where(predicate).ToListAsync();
 
             // Map the results back to TEntity
             return _mapper.Map<IEnumerable<TEntity>>(models);

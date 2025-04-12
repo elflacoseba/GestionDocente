@@ -15,6 +15,7 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
         {
             _context = context;
             _mapper = mapper;
-        }       
+        }
+
     }
 }

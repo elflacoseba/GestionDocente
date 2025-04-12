@@ -11,10 +11,5 @@
         public string? Email { get; set; } = string.Empty;
 
         public string? Website { get; set; } = string.Empty;
-
-        public Establecimiento()
-        {
-            
-        }
     }
 }

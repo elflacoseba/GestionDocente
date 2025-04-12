@@ -1,6 +1,6 @@
 ﻿namespace GestionDocente.Application.Dtos.Response
 {
-    public class EstablecimientoDto
+    public class EstablecimientoResponseDto
     {
         public string Id { get; set; } = string.Empty;
 

@@ -1,8 +1,15 @@
 ﻿using AutoMapper;
+using GestionDocente.Application.Dtos.Request;
 using GestionDocente.Application.Dtos.Response;
+using GestionDocente.Application.Exceptions;
 using GestionDocente.Application.Interfaces;
+using GestionDocente.Application.Validators;
+using GestionDocente.Domain.Entities;
 using GestionDocente.Domain.Interfaces;
-using System.Threading.Tasks;
+using GestionDocente.Domain.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Data;
+using System.Linq.Expressions;
 
 namespace GestionDocente.Application.Services
 {
@@ -19,18 +26,60 @@ namespace GestionDocente.Application.Services
             _mapper = mapper;
         }        
 
-        public async Task<IEnumerable<EstablecimientoDto>> GetEstablecimientosAsync()
+        public async Task<IEnumerable<EstablecimientoResponseDto>> GetEstablecimientosAsync()
         {
             var establecimientosEntity =  await _establecimientoRepository.GetAllAsync();
 
-            return _mapper.Map<IEnumerable<EstablecimientoDto>>(establecimientosEntity);
+            return _mapper.Map<IEnumerable<EstablecimientoResponseDto>>(establecimientosEntity);
         }
 
-        public async Task<EstablecimientoDto> GetEstablecimientosByIdAsync(Guid id)
+        public async Task<EstablecimientoResponseDto> GetEstablecimientosByIdAsync(Guid id)
         {
             var establecimiento =  await _establecimientoRepository.GetByIdAsync(id.ToString());
 
-            return _mapper.Map<EstablecimientoDto>(establecimiento);
+            return _mapper.Map<EstablecimientoResponseDto>(establecimiento);
+        }
+
+        public async Task<IEnumerable<EstablecimientoResponseDto>> BuscarEstablecimientosAsync(Expression<Func<EstablecimientoModel, bool>> predicate)
+        {
+            var resultados = await _establecimientoRepository.SearchAsync(predicate);
+
+            return _mapper.Map<IEnumerable<EstablecimientoResponseDto>>(resultados);
+        }
+
+        public async Task<EstablecimientoResponseDto> CreateEstablecimientoAsync(CreateEstablecimientoDto createEstablecimientoDto)
+        {
+            var rules = new CreateEstablecimientoDtoValidator(this);
+
+            var validationResult = await rules.ValidateAsync(createEstablecimientoDto);
+
+            if (!validationResult.IsValid)
+            {
+                var errorValidations = validationResult.Errors.Select(error => new ErrorValidation(error.PropertyName, error.ErrorMessage)).ToList();
+
+                throw new ValidationException(errorValidations);
+            }
+
+            var establecimiento = _mapper.Map<Establecimiento>(createEstablecimientoDto);
+
+            establecimiento.FechaCreacion = DateTime.UtcNow;
+
+            await _establecimientoRepository.AddAsync(establecimiento);
+
+           var result = await _unitOfWork.CommitAsync();
+
+            if (!result)
+            {
+                throw new Exception("Error al guardar el establecimiento.");
+            }
+
+            return _mapper.Map<EstablecimientoResponseDto>(establecimiento);
+        }
+
+
+        public Task UpdateEstablecimientoAsync(EstablecimientoResponseDto establecimientoDto)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<bool> DeleteEstablecimientoAsync(Guid id)
@@ -38,6 +87,13 @@ namespace GestionDocente.Application.Services
             _establecimientoRepository.Delete(id.ToString());
 
            return  await _unitOfWork.CommitAsync();
+        }
+
+       
+
+        public Task UpdateEstablecimientoAsync(EstablecimientoRequestDto establecimientoRequestDto)
+        {
+            throw new NotImplementedException();
         }
     }
 }

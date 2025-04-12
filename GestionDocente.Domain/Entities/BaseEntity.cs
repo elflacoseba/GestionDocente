@@ -13,5 +13,10 @@
         public DateTime? FechaActualizacion { get; set; }
 
         public bool Activo { get; set; }
+
+        public BaseEntity()
+        {
+            Id = Guid.NewGuid();
+        }
     }
 }

@@ -5,6 +5,6 @@ namespace GestionDocente.Domain.Interfaces
 {
     public interface IEstablecimientoRepository : IGenericRepository<Establecimiento, EstablecimientoModel>        
     {
-        
+
     }
 }

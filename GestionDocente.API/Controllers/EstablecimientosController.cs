@@ -1,7 +1,6 @@
-﻿using GestionDocente.Application.Dtos.Response;
+﻿using GestionDocente.Application.Dtos.Request;
+using GestionDocente.Application.Dtos.Response;
 using GestionDocente.Application.Interfaces;
-using GestionDocente.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestionDocente.API.Controllers
@@ -25,8 +24,8 @@ namespace GestionDocente.API.Controllers
             return Ok(establecimientos);
         }
 
-        [HttpGet("GetEstablecimientoById/{establecimientoId}")]
-        public async Task<ActionResult<EstablecimientoDto>> GetEstablecimientoByIdAsync(string establecimientoId)
+        [HttpGet("GetEstablecimientoByIdAsync/{establecimientoId}", Name = "GetEstablecimientoByIdAsync")]
+        public async Task<ActionResult<EstablecimientoResponseDto>> GetEstablecimientoByIdAsync(string establecimientoId)
         {            
             if (!Guid.TryParse(establecimientoId, out var idGuidParsed))
             {
@@ -44,7 +43,7 @@ namespace GestionDocente.API.Controllers
         }
 
         [HttpPost("DeleteEstablecimiento/{establecimientoId}")]
-        public async Task<ActionResult> DeleteRole(string establecimientoId)
+        public async Task<ActionResult> DeleteEstablecimientoAsync(string establecimientoId)
         {
             if (!Guid.TryParse(establecimientoId, out var idGuidParsed))
             {
@@ -68,6 +67,20 @@ namespace GestionDocente.API.Controllers
             {
                 return BadRequest("Error al eliminar el establecimiento.");
             }
+        }
+
+        [HttpPost]
+        [Route("CreateEstablecimiento")]
+        public async Task<ActionResult> CreateEstablecimiento(CreateEstablecimientoDto createEstablecimientoDto)
+        {
+            var establecimientoCreated = await _establecimientoService.CreateEstablecimientoAsync(createEstablecimientoDto);
+
+            if (establecimientoCreated is null)
+            {
+                return BadRequest("Error al crear el establecimiento.");
+            }
+
+            return CreatedAtRoute("GetEstablecimientoByIdAsync", new { establecimientoId = establecimientoCreated.Id }, establecimientoCreated);
         }
     }
 }
