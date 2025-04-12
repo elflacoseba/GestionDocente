@@ -2,52 +2,60 @@
 using System.Linq.Expressions;
 using GestionDocente.Infrastructure.Persistences.Context;
 using GestionDocente.Domain.Interfaces;
+using AutoMapper;
 
 namespace GestionDocente.Infrastructure.Persistences.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<TEntity, TModel> : IGenericRepository<TEntity, TModel>
+        where TEntity : class
+        where TModel : class
     {
         private readonly ApplicationDbContext _context;
-        private readonly DbSet<T> _dbSet;
+        private readonly DbSet<TModel> _dbSet;
+        private readonly IMapper _mapper;
 
-        public GenericRepository(ApplicationDbContext context)
+        public GenericRepository(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
-            _dbSet = _context.Set<T>();
+            _mapper = mapper;
+            _dbSet = _context.Set<TModel>();
         }
 
-        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await _context.Set<T>().AsNoTracking().Where(predicate).ToListAsync();
+            var models = await _dbSet.AsNoTracking().ToListAsync();
+            
+            return  _mapper.Map<IEnumerable<TEntity>>(models);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
-        {
-            return await _dbSet.AsNoTracking().ToListAsync();
-        }
+        //public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        //{
+        //    return await _context.Set<TEntity>().AsNoTracking().Where(predicate).ToListAsync();
+        //}
 
-        public async Task<T> GetByIdAsync(int id)
-        {
-            var result = await _dbSet.FindAsync(id);
-            return result!;
-        }
-        public async Task AddAsync(T entity)
-        {
-           await _dbSet.AddAsync(entity);
-        }
 
-        public void Update(T entity)
-        {
-            _dbSet.Update(entity);            
-        }
+        //public async Task<TEntity> GetByIdAsync(int id)
+        //{
+        //    var result = await _dbSet.FindAsync(id);
+        //    return result!;
+        //}
+        //public async Task AddAsync(TEntity entity)
+        //{
+        //   await _dbSet.AddAsync(entity);
+        //}
 
-        public void Delete(int id)
-        {
-            T entity = _dbSet.Find(id)!;
-            if (entity != null)
-            {
-                _dbSet.Remove(entity);
-            }
-        }
+        //public void Update(TEntity entity)
+        //{
+        //    _dbSet.Update(entity);            
+        //}
+
+        //public void Delete(int id)
+        //{
+        //    TEntity entity = _dbSet.Find(id)!;
+        //    if (entity != null)
+        //    {
+        //        _dbSet.Remove(entity);
+        //    }
+        //}
     }
 }

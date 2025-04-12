@@ -2,13 +2,15 @@
 
 namespace GestionDocente.Domain.Interfaces
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IGenericRepository<TEntity, TModel>
+        where TEntity : class
+        where TModel : class
     {
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<T> GetByIdAsync(int id);
-        Task AddAsync(T entity);
-        void Update(T entity);
-        void Delete(int id);
-        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<TEntity>> GetAllAsync();
+        //Task<TEntity> GetByIdAsync(int id);
+        //Task AddAsync(TEntity entity);
+        //void Update(TEntity entity);
+        //void Delete(int id);
+        //Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
     }
 }

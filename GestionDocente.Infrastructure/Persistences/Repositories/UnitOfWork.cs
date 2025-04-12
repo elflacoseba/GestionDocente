@@ -2,7 +2,7 @@
 using GestionDocente.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
 using AutoMapper;
-using GestionDocente.Infrastructure.Models;
+using GestionDocente.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace GestionDocente.Infrastructure.Persistences.Repositories
@@ -12,7 +12,7 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
 
         private bool disposedValue;
         private readonly ApplicationDbContext _context;
-        private IDbContextTransaction _transaction;
+        private IDbContextTransaction? _transaction;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUserModel> _userManager;
         private readonly RoleManager<ApplicationRoleModel> _roleManager;
@@ -20,6 +20,8 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
         public IApplicationUserRepository ApplicationUsers { get; }
 
         public IApplicationRoleRepository ApplicationRoles { get; }
+
+        public IEstablecimientoRepository Establecimientos { get; }
 
         public UnitOfWork(ApplicationDbContext context, IMapper mapper, UserManager<ApplicationUserModel> userManager, RoleManager<ApplicationRoleModel> roleManager)
 
@@ -31,6 +33,7 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
 
             ApplicationUsers = new ApplicationUserRepository(_userManager, _mapper);
             ApplicationRoles = new ApplicationRoleRepository(_roleManager, _mapper);
+            Establecimientos = new EstablecimientoRepository(_context, _mapper);
         }
 
         public void BeginTransaction()

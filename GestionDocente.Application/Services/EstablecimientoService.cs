@@ -1,0 +1,29 @@
+﻿using AutoMapper;
+using GestionDocente.Application.Dtos.Response;
+using GestionDocente.Application.Interfaces;
+using GestionDocente.Domain.Interfaces;
+
+namespace GestionDocente.Application.Services
+{
+    public class EstablecimientoService : IEstablecimientoService
+    {
+        private readonly IEstablecimientoRepository _establecimientoRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public EstablecimientoService(IEstablecimientoRepository establecimientoRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            _establecimientoRepository = establecimientoRepository;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
+
+        public async Task<IEnumerable<EstablecimientoDto>> GetEstablecimientosAsync()
+        {
+            var establecimientosEntity =  await _establecimientoRepository.GetAllAsync();
+
+            return _mapper.Map<IEnumerable<EstablecimientoDto>>(establecimientosEntity);
+
+        }
+    }
+}

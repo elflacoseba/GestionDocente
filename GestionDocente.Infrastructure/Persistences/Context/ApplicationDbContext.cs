@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using GestionDocente.Infrastructure.Models;
+using GestionDocente.Domain.Models;
+using System.Reflection;
 
 namespace GestionDocente.Infrastructure.Persistences.Context
 {
@@ -12,5 +13,15 @@ namespace GestionDocente.Infrastructure.Persistences.Context
 
         public DbSet<ApplicationUserModel> ApplicationUsers { get; set; }
         public DbSet<ApplicationRoleModel> ApplicationRoles { get; set; }
+        public DbSet<EstablecimientoModel> Establecimientos { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.HasAnnotation("Relational:Collation", "Modern_Spanish_CI_AS");
+
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
     }
 }

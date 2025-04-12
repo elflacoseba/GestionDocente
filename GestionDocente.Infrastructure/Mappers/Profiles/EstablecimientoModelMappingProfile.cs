@@ -4,11 +4,11 @@ using GestionDocente.Domain.Models;
 
 namespace GestionDocente.Infrastructure.Mappers.Profiles
 {
-    public class ApplicationRoleMappingsProfile : Profile
+    public class EstablecimientoModelMappingProfile : Profile
     {
-        public ApplicationRoleMappingsProfile()
+        public EstablecimientoModelMappingProfile()
         {
-            CreateMap<ApplicationRoleModel, ApplicationRole>()
+            CreateMap<EstablecimientoModel, Establecimiento>()
                 .ReverseMap();
         }
     }

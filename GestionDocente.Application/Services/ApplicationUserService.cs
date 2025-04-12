@@ -98,19 +98,17 @@ namespace GestionDocente.Application.Services
 
             var resultCreateUser =  await _userRepository.CreateUserAsync(userEnity, user.Password!);
 
-            if (resultCreateUser)
-            {
-                //Commit a la base de datos
-                return await _unitOfWork.CommitAsync();
-            }
-            else
-            {
+            if (string.IsNullOrEmpty(resultCreateUser))
+            {            
                 //Rollback a la base de datos
-                await _unitOfWork.RollbackAsync();
+                await _unitOfWork.RollbackAsync();                
+            }
 
-                return false;
-            }            
-                        
+            //Commit a la base de datos
+            await _unitOfWork.CommitAsync();
+
+            return resultCreateUser;
+
         }
 
         public async Task<bool> UpdateUserAsync(string userId, UpdateApplicationUserRequestDto user)
