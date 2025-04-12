@@ -8,6 +8,6 @@ namespace GestionDocente.Application.Interfaces
         Task<EstablecimientoDto> GetEstablecimientosByIdAsync(Guid id);
         //Task CreateAsync(EstablecimientoDto establecimientoDto);
         //Task UpdateAsync(EstablecimientoDto establecimientoDto);
-        //Task DeleteAsync(int id);
+        Task<bool> DeleteEstablecimientoAsync(Guid id);
     }
 }

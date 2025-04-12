@@ -2,6 +2,7 @@
 using GestionDocente.Application.Dtos.Response;
 using GestionDocente.Application.Interfaces;
 using GestionDocente.Domain.Interfaces;
+using System.Threading.Tasks;
 
 namespace GestionDocente.Application.Services
 {
@@ -16,14 +17,13 @@ namespace GestionDocente.Application.Services
             _establecimientoRepository = establecimientoRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-        }
+        }        
 
         public async Task<IEnumerable<EstablecimientoDto>> GetEstablecimientosAsync()
         {
             var establecimientosEntity =  await _establecimientoRepository.GetAllAsync();
 
             return _mapper.Map<IEnumerable<EstablecimientoDto>>(establecimientosEntity);
-
         }
 
         public async Task<EstablecimientoDto> GetEstablecimientosByIdAsync(Guid id)
@@ -33,5 +33,11 @@ namespace GestionDocente.Application.Services
             return _mapper.Map<EstablecimientoDto>(establecimiento);
         }
 
+        public async Task<bool> DeleteEstablecimientoAsync(Guid id)
+        {
+            _establecimientoRepository.Delete(id.ToString());
+
+           return  await _unitOfWork.CommitAsync();
+        }
     }
 }

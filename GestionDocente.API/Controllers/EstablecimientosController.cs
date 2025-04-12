@@ -1,5 +1,6 @@
 ﻿using GestionDocente.Application.Dtos.Response;
 using GestionDocente.Application.Interfaces;
+using GestionDocente.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,14 +28,12 @@ namespace GestionDocente.API.Controllers
         [HttpGet("GetEstablecimientoById/{establecimientoId}")]
         public async Task<ActionResult<EstablecimientoDto>> GetEstablecimientoByIdAsync(string establecimientoId)
         {            
-            var idGuid = Guid.TryParse(establecimientoId, out var idParsed);
-
-            if (!idGuid)
+            if (!Guid.TryParse(establecimientoId, out var idGuidParsed))
             {
                 return BadRequest("El id del establecimiento no es válido.");
             }
 
-            var establecimiento = await _establecimientoService.GetEstablecimientosByIdAsync(new Guid(establecimientoId));
+            var establecimiento = await _establecimientoService.GetEstablecimientosByIdAsync(idGuidParsed);
 
             if (establecimiento is null)
             {
@@ -42,6 +41,33 @@ namespace GestionDocente.API.Controllers
             }
 
             return Ok(establecimiento);
+        }
+
+        [HttpPost("DeleteEstablecimiento/{establecimientoId}")]
+        public async Task<ActionResult> DeleteRole(string establecimientoId)
+        {
+            if (!Guid.TryParse(establecimientoId, out var idGuidParsed))
+            {
+                return BadRequest("El id del establecimiento no es válido.");
+            }
+
+            var establecimiento = await _establecimientoService.GetEstablecimientosByIdAsync(idGuidParsed);
+
+            if (establecimiento is null)
+            {
+                return NotFound("Establecimiento no encontrado.");
+            }
+
+            var result = await _establecimientoService.DeleteEstablecimientoAsync(idGuidParsed);
+
+            if (result)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Error al eliminar el establecimiento.");
+            }
         }
     }
 }
