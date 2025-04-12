@@ -7,10 +7,10 @@ namespace GestionDocente.Domain.Interfaces
         where TModel : class
     {
         Task<IEnumerable<TEntity>> GetAllAsync();
-        //Task<TEntity> GetByIdAsync(int id);
-        //Task AddAsync(TEntity entity);
-        //void Update(TEntity entity);
-        //void Delete(int id);
-        //Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<TEntity?> GetByIdAsync(string id);
+        Task AddAsync(TEntity entity);
+        void Update(TEntity entity);
+        void Delete(string id);
+        Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
     }
 }

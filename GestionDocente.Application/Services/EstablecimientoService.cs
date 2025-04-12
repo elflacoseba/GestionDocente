@@ -25,5 +25,13 @@ namespace GestionDocente.Application.Services
             return _mapper.Map<IEnumerable<EstablecimientoDto>>(establecimientosEntity);
 
         }
+
+        public async Task<EstablecimientoDto> GetEstablecimientosByIdAsync(Guid id)
+        {
+            var establecimiento =  await _establecimientoRepository.GetByIdAsync(id.ToString());
+
+            return _mapper.Map<EstablecimientoDto>(establecimiento);
+        }
+
     }
 }

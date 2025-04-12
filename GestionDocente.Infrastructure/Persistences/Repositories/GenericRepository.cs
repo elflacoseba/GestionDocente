@@ -28,34 +28,52 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
             return  _mapper.Map<IEnumerable<TEntity>>(models);
         }
 
-        //public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
-        //{
-        //    return await _context.Set<TEntity>().AsNoTracking().Where(predicate).ToListAsync();
-        //}
+        public async Task<TEntity?> GetByIdAsync(string id)
+        {
+            var model = await _dbSet.FindAsync(id);
+            
+            if (model == null)
+            {
+                return null;
+            }
 
+            return _mapper.Map<TEntity>(model);
+        }
 
-        //public async Task<TEntity> GetByIdAsync(int id)
-        //{
-        //    var result = await _dbSet.FindAsync(id);
-        //    return result!;
-        //}
-        //public async Task AddAsync(TEntity entity)
-        //{
-        //   await _dbSet.AddAsync(entity);
-        //}
+        public async Task AddAsync(TEntity entity)
+        {
+            var model = _mapper.Map<TModel>(entity);
 
-        //public void Update(TEntity entity)
-        //{
-        //    _dbSet.Update(entity);            
-        //}
+            await _dbSet.AddAsync(model);
+        }
 
-        //public void Delete(int id)
-        //{
-        //    TEntity entity = _dbSet.Find(id)!;
-        //    if (entity != null)
-        //    {
-        //        _dbSet.Remove(entity);
-        //    }
-        //}
+        public void Update(TEntity entity)
+        {
+            var model = _mapper.Map<TModel>(entity);
+
+             _dbSet.Update(model);
+        }
+
+        public void Delete(string id)
+        {
+            TModel model = _dbSet.Find(id)!;
+            
+            if (model != null)
+            {
+                _dbSet.Remove(model);
+            }
+        }
+
+        public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            // Map the predicate from TEntity to TModel
+            var modelPredicate = _mapper.Map<Expression<Func<TModel, bool>>>(predicate);
+
+            // Perform the query using the mapped predicate
+            var models = await _dbSet.AsNoTracking().Where(modelPredicate).ToListAsync();
+
+            // Map the results back to TEntity
+            return _mapper.Map<IEnumerable<TEntity>>(models);
+        }        
     }
 }
