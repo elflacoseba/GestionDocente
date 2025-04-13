@@ -11,7 +11,7 @@ namespace GestionDocente.Application.Interfaces
         Task<EstablecimientoResponseDto> GetEstablecimientosByIdAsync(Guid id);
         Task<IEnumerable<EstablecimientoResponseDto>> BuscarEstablecimientosAsync(Expression<Func<EstablecimientoModel, bool>> predicate);
         Task<EstablecimientoResponseDto> CreateEstablecimientoAsync(CreateEstablecimientoDto createEstablecimientoDto);
-        Task UpdateEstablecimientoAsync(EstablecimientoRequestDto establecimientoRequestDto);
+        Task<EstablecimientoResponseDto> UpdateEstablecimientoAsync(UpdateEstablecimientoDto updateEstablecimientoDto);
         Task<bool> DeleteEstablecimientoAsync(Guid id);
     }
 }

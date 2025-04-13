@@ -12,6 +12,8 @@ namespace GestionDocente.Application.Mappers.Profiles
             CreateMap<Establecimiento, EstablecimientoResponseDto>();
 
             CreateMap<CreateEstablecimientoDto, Establecimiento>();
+
+            CreateMap<UpdateEstablecimientoDto, Establecimiento>();
         }
     }    
 }

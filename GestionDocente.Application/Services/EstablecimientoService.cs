@@ -35,9 +35,9 @@ namespace GestionDocente.Application.Services
 
         public async Task<EstablecimientoResponseDto> GetEstablecimientosByIdAsync(Guid id)
         {
-            var establecimiento =  await _establecimientoRepository.GetByIdAsync(id.ToString());
+            var establecimiento =  await BuscarEstablecimientosAsync(x => x.Id.Equals(id.ToString()));
 
-            return _mapper.Map<EstablecimientoResponseDto>(establecimiento);
+            return _mapper.Map<EstablecimientoResponseDto>(establecimiento.FirstOrDefault());
         }
 
         public async Task<IEnumerable<EstablecimientoResponseDto>> BuscarEstablecimientosAsync(Expression<Func<EstablecimientoModel, bool>> predicate)
@@ -76,10 +76,33 @@ namespace GestionDocente.Application.Services
             return _mapper.Map<EstablecimientoResponseDto>(establecimiento);
         }
 
-
-        public Task UpdateEstablecimientoAsync(EstablecimientoResponseDto establecimientoDto)
+        public async Task<EstablecimientoResponseDto> UpdateEstablecimientoAsync(UpdateEstablecimientoDto updateEstablecimientoDto)
         {
-            throw new NotImplementedException();
+            var validationUpdateRules = new UpdateEstablecimientoDtoValidator(this);
+
+            var validationResult = await validationUpdateRules.ValidateAsync(updateEstablecimientoDto);
+
+            if (!validationResult.IsValid)
+            {
+                var errorValidations = validationResult.Errors.Select(error => new ErrorValidation(error.PropertyName, error.ErrorMessage)).ToList();
+
+                throw new ValidationException(errorValidations);
+            }
+
+            var establecimientoEntity = await _establecimientoRepository.GetByIdAsync(updateEstablecimientoDto.GetId()!);
+
+            _mapper.Map(updateEstablecimientoDto, establecimientoEntity);
+
+            await _establecimientoRepository.Update(establecimientoEntity!.Id.ToString(), establecimientoEntity!);
+
+            var result = await _unitOfWork.CommitAsync();
+
+            if (!result)
+            {
+                throw new Exception("Error al guardar el establecimiento.");
+            }
+
+            return _mapper.Map<EstablecimientoResponseDto>(establecimientoEntity);
         }
 
         public async Task<bool> DeleteEstablecimientoAsync(Guid id)
@@ -88,9 +111,7 @@ namespace GestionDocente.Application.Services
 
            return  await _unitOfWork.CommitAsync();
         }
-
-       
-
+      
         public Task UpdateEstablecimientoAsync(EstablecimientoRequestDto establecimientoRequestDto)
         {
             throw new NotImplementedException();

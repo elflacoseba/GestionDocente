@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using GestionDocente.Infrastructure.Persistences.Context;
+﻿using AutoMapper;
 using GestionDocente.Domain.Interfaces;
-using AutoMapper;
+using GestionDocente.Infrastructure.Persistences.Context;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace GestionDocente.Infrastructure.Persistences.Repositories
 {
@@ -31,7 +31,7 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
         public async Task<TEntity?> GetByIdAsync(string id)
         {
             var model = await _dbSet.FindAsync(id);
-            
+
             if (model == null)
             {
                 return null;
@@ -42,25 +42,28 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
 
         public async Task AddAsync(TEntity entity)
         {
-            var model = _mapper.Map<TModel>(entity);
+            var modelDb = _mapper.Map<TModel>(entity);
 
-            await _dbSet.AddAsync(model);
+            await _dbSet.AddAsync(modelDb);
         }
 
-        public void Update(TEntity entity)
-        {
-            var model = _mapper.Map<TModel>(entity);
+        public async Task Update(string id, TEntity entity)
+        {          
+            var modelDb = await _dbSet.FindAsync(id);
 
-             _dbSet.Update(model);
+            _context.Entry(modelDb!).State = EntityState.Detached; // Detach the entity to avoid tracking issues
+
+            modelDb = _mapper.Map<TModel>(entity);            
+            _dbSet.Update(modelDb!);
         }
 
-        public void Delete(string id)
+        public async Task Delete(string id)
         {
-            TModel model = _dbSet.Find(id)!;
+            var modelDb = await _dbSet.FindAsync(id);
             
-            if (model != null)
+            if (modelDb != null)
             {
-                _dbSet.Remove(model);
+                _dbSet.Remove(modelDb);
             }
         }
 

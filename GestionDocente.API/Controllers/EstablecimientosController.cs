@@ -16,7 +16,7 @@ namespace GestionDocente.API.Controllers
             _establecimientoService = establecimientoService;
         }
 
-        [HttpGet]        
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<UserResponseDto>>> Index()
         {
             var establecimientos = await _establecimientoService.GetEstablecimientosAsync();
@@ -24,9 +24,9 @@ namespace GestionDocente.API.Controllers
             return Ok(establecimientos);
         }
 
-        [HttpGet("GetEstablecimientoByIdAsync/{establecimientoId}", Name = "GetEstablecimientoByIdAsync")]
+        [HttpGet("{establecimientoId}", Name = "GetEstablecimientoByIdAsync")]
         public async Task<ActionResult<EstablecimientoResponseDto>> GetEstablecimientoByIdAsync(string establecimientoId)
-        {            
+        {
             if (!Guid.TryParse(establecimientoId, out var idGuidParsed))
             {
                 return BadRequest("El id del establecimiento no es válido.");
@@ -42,7 +42,49 @@ namespace GestionDocente.API.Controllers
             return Ok(establecimiento);
         }
 
-        [HttpPost("DeleteEstablecimiento/{establecimientoId}")]
+        [HttpPost]
+        [Route("CreateEstablecimiento")]
+        public async Task<ActionResult> CreateEstablecimiento(CreateEstablecimientoDto createEstablecimientoDto)
+        {
+            var establecimientoCreated = await _establecimientoService.CreateEstablecimientoAsync(createEstablecimientoDto);
+
+            if (establecimientoCreated is null)
+            {
+                return BadRequest("Error al crear el establecimiento.");
+            }
+
+            return CreatedAtRoute("GetEstablecimientoByIdAsync", new { establecimientoId = establecimientoCreated.Id }, establecimientoCreated);
+        }
+
+        [HttpPut("UpdateEstablecimiento/{establecimientoId}")]
+        public async Task<ActionResult> UpdateEstablecimiento(string establecimientoId, UpdateEstablecimientoDto updateEstablecimientoDto)
+        {
+            if (!Guid.TryParse(establecimientoId, out var idGuidParsed))
+            {
+                return BadRequest("El id del establecimiento no es válido.");
+            }
+
+            var establecimiento = await _establecimientoService.GetEstablecimientosByIdAsync(idGuidParsed);
+
+            if (establecimiento is null)
+            {
+                return NotFound("Establecimiento no encontrado.");
+            }
+
+            //Paso el id del establecimiento al DTO.
+            updateEstablecimientoDto.SetId(establecimientoId);
+
+            var result = await _establecimientoService.UpdateEstablecimientoAsync(updateEstablecimientoDto);
+
+            if (result is null)
+            {
+                return BadRequest("Error al modificar el rol.");
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("DeleteEstablecimiento/{establecimientoId}")]
         public async Task<ActionResult> DeleteEstablecimientoAsync(string establecimientoId)
         {
             if (!Guid.TryParse(establecimientoId, out var idGuidParsed))
@@ -68,19 +110,5 @@ namespace GestionDocente.API.Controllers
                 return BadRequest("Error al eliminar el establecimiento.");
             }
         }
-
-        [HttpPost]
-        [Route("CreateEstablecimiento")]
-        public async Task<ActionResult> CreateEstablecimiento(CreateEstablecimientoDto createEstablecimientoDto)
-        {
-            var establecimientoCreated = await _establecimientoService.CreateEstablecimientoAsync(createEstablecimientoDto);
-
-            if (establecimientoCreated is null)
-            {
-                return BadRequest("Error al crear el establecimiento.");
-            }
-
-            return CreatedAtRoute("GetEstablecimientoByIdAsync", new { establecimientoId = establecimientoCreated.Id }, establecimientoCreated);
-        }
-    }
+    }       
 }

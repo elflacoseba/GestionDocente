@@ -9,8 +9,8 @@ namespace GestionDocente.Domain.Interfaces
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<TEntity?> GetByIdAsync(string id);
         Task AddAsync(TEntity entity);
-        void Update(TEntity entity);
-        void Delete(string id);
+        Task Update(string id, TEntity entity);
+        Task Delete(string id);
         Task<IEnumerable<TEntity>> SearchAsync(Expression<Func<TModel, bool>> predicate);
     }
 }
