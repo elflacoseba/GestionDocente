@@ -24,7 +24,7 @@ namespace GestionDocente.API.Controllers
             return Ok(establecimientos);
         }
 
-        [HttpGet("{establecimientoId}", Name = "GetEstablecimientoByIdAsync")]
+        [HttpGet("{establecimientoId}", Name = "GetByIdAsync")]
         public async Task<ActionResult<EstablecimientoResponseDto>> GetEstablecimientoByIdAsync(string establecimientoId)
         {
             if (!Guid.TryParse(establecimientoId, out var idGuidParsed))
@@ -43,8 +43,8 @@ namespace GestionDocente.API.Controllers
         }
 
         [HttpPost]
-        [Route("CreateEstablecimiento")]
-        public async Task<ActionResult> CreateEstablecimiento(CreateEstablecimientoDto createEstablecimientoDto)
+        [Route("Create")]
+        public async Task<ActionResult> CreateEstablecimientoAsync(CreateEstablecimientoDto createEstablecimientoDto)
         {
             var establecimientoCreated = await _establecimientoService.CreateEstablecimientoAsync(createEstablecimientoDto);
 
@@ -53,11 +53,11 @@ namespace GestionDocente.API.Controllers
                 return BadRequest("Error al crear el establecimiento.");
             }
 
-            return CreatedAtRoute("GetEstablecimientoByIdAsync", new { establecimientoId = establecimientoCreated.Id }, establecimientoCreated);
+            return CreatedAtRoute("GetByIdAsync", new { establecimientoId = establecimientoCreated.Id }, establecimientoCreated);
         }
 
-        [HttpPut("UpdateEstablecimiento/{establecimientoId}")]
-        public async Task<ActionResult> UpdateEstablecimiento(string establecimientoId, UpdateEstablecimientoDto updateEstablecimientoDto)
+        [HttpPut("Update/{establecimientoId}")]
+        public async Task<ActionResult> UpdateEstablecimientoAsync(string establecimientoId, UpdateEstablecimientoDto updateEstablecimientoDto)
         {
             if (!Guid.TryParse(establecimientoId, out var idGuidParsed))
             {
@@ -84,8 +84,8 @@ namespace GestionDocente.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("DeleteEstablecimiento/{establecimientoId}")]
-        public async Task<ActionResult> DeleteEstablecimientoAsync(string establecimientoId)
+        [HttpDelete("Delete/{establecimientoId}")]
+        public async Task<ActionResult> DeleteAsync(string establecimientoId)
         {
             if (!Guid.TryParse(establecimientoId, out var idGuidParsed))
             {

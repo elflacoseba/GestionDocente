@@ -1,6 +1,6 @@
 ﻿namespace GestionDocente.Domain.Models
 {
-    public class BaseModel
+    public abstract class BaseModel
     {
         public string Id { get; set; } = string.Empty;
 

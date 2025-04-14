@@ -7,7 +7,6 @@ using GestionDocente.Application.Validators;
 using GestionDocente.Domain.Entities;
 using GestionDocente.Domain.Interfaces;
 using GestionDocente.Domain.Models;
-using Microsoft.AspNetCore.Identity;
 using System.Data;
 using System.Linq.Expressions;
 
@@ -93,7 +92,9 @@ namespace GestionDocente.Application.Services
 
             _mapper.Map(updateEstablecimientoDto, establecimientoEntity);
 
-            await _establecimientoRepository.Update(establecimientoEntity!.Id.ToString(), establecimientoEntity!);
+            establecimientoEntity!.FechaActualizacion = DateTime.UtcNow;
+
+            await _establecimientoRepository.Update(establecimientoEntity!);
 
             var result = await _unitOfWork.CommitAsync();
 
@@ -107,7 +108,7 @@ namespace GestionDocente.Application.Services
 
         public async Task<bool> DeleteEstablecimientoAsync(Guid id)
         {
-            _establecimientoRepository.Delete(id.ToString());
+            await _establecimientoRepository.Delete(id.ToString());
 
            return  await _unitOfWork.CommitAsync();
         }
