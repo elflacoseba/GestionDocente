@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using GestionDocente.Infrastructure.Persistences.Context;
 using GestionDocente.Infrastructure.Persistences.Repositories;
-using GestionDocente.Domain.Models;
+using GestionDocente.Infrastructure.Models;
 using System.Reflection;
 using GestionDocente.Domain.Interfaces;
 using GestionDocente.Infrastructure.Settings;

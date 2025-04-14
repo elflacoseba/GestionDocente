@@ -1,4 +1,4 @@
-﻿namespace GestionDocente.Domain.Models
+﻿namespace GestionDocente.Infrastructure.Models
 {
     public class EstablecimientoModel : BaseModel
     {

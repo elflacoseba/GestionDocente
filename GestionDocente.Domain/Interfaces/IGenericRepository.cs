@@ -1,12 +1,10 @@
 ﻿using GestionDocente.Domain.Entities;
-using GestionDocente.Domain.Models;
 using System.Linq.Expressions;
 
 namespace GestionDocente.Domain.Interfaces
 {
-    public interface IGenericRepository<TEntity, TModel>
-        where TEntity : BaseEntity
-        where TModel : BaseModel
+    public interface IGenericRepository<TEntity>
+        where TEntity : BaseEntity        
     {
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<TEntity?> GetByIdAsync(string id);

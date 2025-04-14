@@ -1,4 +1,4 @@
-﻿using GestionDocente.Domain.Models;
+﻿using GestionDocente.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using GestionDocente.Domain.Entities;
 using GestionDocente.Domain.Interfaces;
-using GestionDocente.Domain.Models;
+using GestionDocente.Infrastructure.Models;
 using GestionDocente.Infrastructure.Common;
 using GestionDocente.Infrastructure.Persistences.Context;
 using Microsoft.EntityFrameworkCore;
@@ -9,13 +9,13 @@ using System.Linq.Expressions;
 
 namespace GestionDocente.Infrastructure.Persistences.Repositories
 {
-    public class GenericRepository<TEntity, TModel> : IGenericRepository<TEntity, TModel>
+    public class GenericRepository<TEntity, TModel> : IGenericRepository<TEntity>
         where TEntity : BaseEntity
         where TModel : BaseModel
     {
         private readonly ApplicationDbContext _context;
-        private readonly DbSet<TModel> _dbSet;
         private readonly IMapper _mapper;
+        private readonly DbSet<TModel> _dbSet;
 
         public GenericRepository(ApplicationDbContext context, IMapper mapper)
         {

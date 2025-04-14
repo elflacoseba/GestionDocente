@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using GestionDocente.Domain.Entities;
 using GestionDocente.Domain.Interfaces;
-using GestionDocente.Domain.Models;
+using GestionDocente.Infrastructure.Models;
 using GestionDocente.Infrastructure.Persistences.Context;
 
 namespace GestionDocente.Infrastructure.Persistences.Repositories

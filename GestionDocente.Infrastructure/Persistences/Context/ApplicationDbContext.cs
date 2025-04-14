@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using GestionDocente.Domain.Models;
+using GestionDocente.Infrastructure.Models;
 using System.Reflection;
 
 namespace GestionDocente.Infrastructure.Persistences.Context
