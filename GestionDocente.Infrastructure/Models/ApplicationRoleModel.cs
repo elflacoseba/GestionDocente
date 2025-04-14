@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace GestionDocente.Domain.Models
+namespace GestionDocente.Infrastructure.Models
 {
     public class ApplicationRoleModel : IdentityRole
     {

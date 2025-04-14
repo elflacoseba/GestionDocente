@@ -2,7 +2,7 @@
 using GestionDocente.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
 using AutoMapper;
-using GestionDocente.Domain.Models;
+using GestionDocente.Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace GestionDocente.Infrastructure.Persistences.Repositories
