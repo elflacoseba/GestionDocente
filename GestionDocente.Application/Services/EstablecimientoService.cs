@@ -6,7 +6,6 @@ using GestionDocente.Application.Interfaces;
 using GestionDocente.Application.Validators;
 using GestionDocente.Domain.Entities;
 using GestionDocente.Domain.Interfaces;
-using GestionDocente.Domain.Models;
 using System.Data;
 using System.Linq.Expressions;
 
@@ -32,14 +31,14 @@ namespace GestionDocente.Application.Services
             return _mapper.Map<IEnumerable<EstablecimientoResponseDto>>(establecimientosEntity);
         }
 
-        public async Task<EstablecimientoResponseDto> GetEstablecimientosByIdAsync(Guid id)
+        public async Task<EstablecimientoResponseDto?> GetEstablecimientosByIdAsync(string id)
         {
-            var establecimiento =  await BuscarEstablecimientosAsync(x => x.Id.Equals(id.ToString()));
+            var establecimiento =  await _establecimientoRepository.GetByIdAsync(id);
 
-            return _mapper.Map<EstablecimientoResponseDto>(establecimiento.FirstOrDefault());
+            return _mapper.Map<EstablecimientoResponseDto>(establecimiento);
         }
 
-        public async Task<IEnumerable<EstablecimientoResponseDto>> BuscarEstablecimientosAsync(Expression<Func<EstablecimientoModel, bool>> predicate)
+        public async Task<IEnumerable<EstablecimientoResponseDto>> BuscarEstablecimientosAsync(Expression<Func<Establecimiento, bool>> predicate)
         {
             var resultados = await _establecimientoRepository.SearchAsync(predicate);
 
@@ -106,16 +105,12 @@ namespace GestionDocente.Application.Services
             return _mapper.Map<EstablecimientoResponseDto>(establecimientoEntity);
         }
 
-        public async Task<bool> DeleteEstablecimientoAsync(Guid id)
+        public async Task<bool> DeleteEstablecimientoAsync(string id)
         {
-            await _establecimientoRepository.Delete(id.ToString());
+            await _establecimientoRepository.Delete(id);
 
            return  await _unitOfWork.CommitAsync();
         }
       
-        public Task UpdateEstablecimientoAsync(EstablecimientoRequestDto establecimientoRequestDto)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

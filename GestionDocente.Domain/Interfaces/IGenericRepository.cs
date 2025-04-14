@@ -13,6 +13,6 @@ namespace GestionDocente.Domain.Interfaces
         Task AddAsync(TEntity entity);
         Task Update(TEntity entity);
         Task Delete(string id);
-        Task<IEnumerable<TEntity>> SearchAsync(Expression<Func<TModel, bool>> predicate);
+        Task<IEnumerable<TEntity>> SearchAsync(Expression<Func<TEntity, bool>> predicate);
     }
 }

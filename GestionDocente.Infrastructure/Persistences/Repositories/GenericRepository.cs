@@ -2,6 +2,7 @@
 using GestionDocente.Domain.Entities;
 using GestionDocente.Domain.Interfaces;
 using GestionDocente.Domain.Models;
+using GestionDocente.Infrastructure.Common;
 using GestionDocente.Infrastructure.Persistences.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -73,12 +74,14 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
             }
         }
 
-        public async Task<IEnumerable<TEntity>> SearchAsync(Expression<Func<TModel, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> SearchAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            var models = await _dbSet.AsNoTracking().Where(predicate).ToListAsync();
+            var visitor = new TypeConversionVisitor(typeof(TEntity), typeof(TModel));
+            var convertedExpression = visitor.Convert<TEntity, TModel>(predicate);
 
-            // Map the results back to TEntity
+            var models = await _dbSet.AsNoTracking().Where(convertedExpression).ToListAsync();
             return _mapper.Map<IEnumerable<TEntity>>(models);
-        }        
+        }
+        
     }
 }

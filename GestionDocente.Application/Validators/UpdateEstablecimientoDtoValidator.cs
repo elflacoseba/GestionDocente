@@ -21,7 +21,12 @@ namespace GestionDocente.Application.Validators
                 RuleFor(x => x.Nombre)
                .MustAsync(async (establecimiento, nombre, cancellationToken) =>
                {
-                   var establecimientos = await _establecimientoService.BuscarEstablecimientosAsync(x => x.Nombre.ToUpper() == nombre!.ToUpper() && x.Id != establecimiento.GetId());
+                   var establecimientoId = establecimiento.GetId();
+
+                   var establecimientos = await _establecimientoService.BuscarEstablecimientosAsync(x =>
+                                                                                                        (x.Nombre.ToUpper() == nombre!.ToUpper()) &&
+                                                                                                        (x.Id != establecimientoId)
+                                                                                                    );
 
                    return establecimientos.Any() == false;
 

@@ -2,7 +2,7 @@
 {
     public abstract class BaseEntity
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public int UsuarioCreacion { get; set; }
 
@@ -16,7 +16,7 @@
 
         public BaseEntity()
         {
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid().ToString();
         }
     }
 }

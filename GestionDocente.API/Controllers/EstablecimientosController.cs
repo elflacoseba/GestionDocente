@@ -32,7 +32,7 @@ namespace GestionDocente.API.Controllers
                 return BadRequest("El id del establecimiento no es válido.");
             }
 
-            var establecimiento = await _establecimientoService.GetEstablecimientosByIdAsync(idGuidParsed);
+            var establecimiento = await _establecimientoService.GetEstablecimientosByIdAsync(idGuidParsed.ToString());
 
             if (establecimiento is null)
             {
@@ -64,7 +64,7 @@ namespace GestionDocente.API.Controllers
                 return BadRequest("El id del establecimiento no es válido.");
             }
 
-            var establecimiento = await _establecimientoService.GetEstablecimientosByIdAsync(idGuidParsed);
+            var establecimiento = await _establecimientoService.GetEstablecimientosByIdAsync(idGuidParsed.ToString());
 
             if (establecimiento is null)
             {
@@ -92,14 +92,14 @@ namespace GestionDocente.API.Controllers
                 return BadRequest("El id del establecimiento no es válido.");
             }
 
-            var establecimiento = await _establecimientoService.GetEstablecimientosByIdAsync(idGuidParsed);
+            var establecimiento = await _establecimientoService.GetEstablecimientosByIdAsync(idGuidParsed.ToString());
 
             if (establecimiento is null)
             {
                 return NotFound("Establecimiento no encontrado.");
             }
 
-            var result = await _establecimientoService.DeleteEstablecimientoAsync(idGuidParsed);
+            var result = await _establecimientoService.DeleteEstablecimientoAsync(idGuidParsed.ToString());
 
             if (result)
             {
