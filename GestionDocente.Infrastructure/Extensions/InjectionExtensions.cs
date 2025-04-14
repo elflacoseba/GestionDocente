@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using GestionDocente.Infrastructure.Persistences.Context;
 using GestionDocente.Infrastructure.Persistences.Repositories;
-using GestionDocente.Infrastructure.Models;
+using GestionDocente.Domain.Models;
 using System.Reflection;
 using GestionDocente.Domain.Interfaces;
 using GestionDocente.Infrastructure.Settings;
@@ -67,6 +67,8 @@ namespace GestionDocente.Infrastructure.Extensions
 
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddScoped<IApplicationRoleRepository, ApplicationRoleRepository>();
+            services.AddScoped<IEstablecimientoRepository, EstablecimientoRepository>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
            
             return services;

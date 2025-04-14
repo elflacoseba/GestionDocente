@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using GestionDocente.Domain.Entities;
-using GestionDocente.Infrastructure.Models;
+using GestionDocente.Domain.Models;
 using GestionDocente.Domain.Interfaces;
 
 

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GestionDocente.Domain.Entities;
-using GestionDocente.Infrastructure.Models;
+using GestionDocente.Domain.Models;
 
 namespace GestionDocente.Infrastructure.Mappers.Profiles
 {

@@ -1,14 +1,18 @@
-﻿using System.Linq.Expressions;
+﻿using GestionDocente.Domain.Entities;
+using GestionDocente.Domain.Models;
+using System.Linq.Expressions;
 
 namespace GestionDocente.Domain.Interfaces
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IGenericRepository<TEntity, TModel>
+        where TEntity : BaseEntity
+        where TModel : BaseModel
     {
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<T> GetByIdAsync(int id);
-        Task AddAsync(T entity);
-        void Update(T entity);
-        void Delete(int id);
-        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<TEntity>> GetAllAsync();
+        Task<TEntity?> GetByIdAsync(string id);
+        Task AddAsync(TEntity entity);
+        Task Update(TEntity entity);
+        Task Delete(string id);
+        Task<IEnumerable<TEntity>> SearchAsync(Expression<Func<TEntity, bool>> predicate);
     }
 }

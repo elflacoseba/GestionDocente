@@ -1,53 +1,87 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using GestionDocente.Infrastructure.Persistences.Context;
+﻿using AutoMapper;
+using GestionDocente.Domain.Entities;
 using GestionDocente.Domain.Interfaces;
+using GestionDocente.Domain.Models;
+using GestionDocente.Infrastructure.Common;
+using GestionDocente.Infrastructure.Persistences.Context;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace GestionDocente.Infrastructure.Persistences.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<TEntity, TModel> : IGenericRepository<TEntity, TModel>
+        where TEntity : BaseEntity
+        where TModel : BaseModel
     {
         private readonly ApplicationDbContext _context;
-        private readonly DbSet<T> _dbSet;
+        private readonly DbSet<TModel> _dbSet;
+        private readonly IMapper _mapper;
 
-        public GenericRepository(ApplicationDbContext context)
+        public GenericRepository(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
-            _dbSet = _context.Set<T>();
+            _mapper = mapper;
+            _dbSet = _context.Set<TModel>();
         }
 
-        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await _context.Set<T>().AsNoTracking().Where(predicate).ToListAsync();
+            var models = await _dbSet.AsNoTracking().ToListAsync();
+            
+            return  _mapper.Map<IEnumerable<TEntity>>(models);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<TEntity?> GetByIdAsync(string id)
         {
-            return await _dbSet.AsNoTracking().ToListAsync();
-        }
+            var model = await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
-        public async Task<T> GetByIdAsync(int id)
-        {
-            var result = await _dbSet.FindAsync(id);
-            return result!;
-        }
-        public async Task AddAsync(T entity)
-        {
-           await _dbSet.AddAsync(entity);
-        }
-
-        public void Update(T entity)
-        {
-            _dbSet.Update(entity);            
-        }
-
-        public void Delete(int id)
-        {
-            T entity = _dbSet.Find(id)!;
-            if (entity != null)
+            if (model == null)
             {
-                _dbSet.Remove(entity);
+                return null;
+            }
+
+            return _mapper.Map<TEntity>(model);
+        }
+
+        public async Task AddAsync(TEntity entity)
+        {
+            var modelDb = _mapper.Map<TModel>(entity);
+
+            await _dbSet.AddAsync(modelDb);
+        }
+
+        public async Task Update(TEntity entity)
+        {          
+            var modelDb = await _dbSet.FindAsync(entity.Id.ToString());
+
+            _context.Entry(modelDb!).State = EntityState.Detached; // Detach the entity to avoid tracking issues
+
+            modelDb = _mapper.Map<TModel>(entity);
+
+            _context.Entry(modelDb).Property(x => x.UsuarioCreacion).IsModified = false;
+            _context.Entry(modelDb).Property(x => x.FechaCreacion).IsModified = false;
+
+            _dbSet.Update(modelDb!);
+        }
+
+        public async Task Delete(string id)
+        {
+            var modelDb = await _dbSet.FindAsync(id);
+            
+            if (modelDb != null)
+            {
+                _dbSet.Remove(modelDb);
             }
         }
+
+        public async Task<IEnumerable<TEntity>> SearchAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            var visitor = new TypeConversionVisitor(typeof(TEntity), typeof(TModel));
+            var convertedExpression = visitor.Convert<TEntity, TModel>(predicate);
+
+            var models = await _dbSet.AsNoTracking().Where(convertedExpression).ToListAsync();
+            return _mapper.Map<IEnumerable<TEntity>>(models);
+        }
+        
     }
 }
