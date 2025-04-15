@@ -1,6 +1,6 @@
 ﻿namespace GestionDocente.Application.Dtos.Response
 {
-    public class RoleResponseDto
+    public class ApplicationRoleResponseDto
     {
         /// <summary>
         /// Gets or sets the primary key for this role.

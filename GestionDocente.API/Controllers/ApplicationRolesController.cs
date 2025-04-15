@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GestionDocente.Application.Interfaces;
 using GestionDocente.Application.Dtos.Request;
-using GestionDocente.API.Models.Errors;
 using GestionDocente.Application.Dtos.Response;
 
-namespace GestionDocente.SecureIAM_API.Controllers
+namespace GestionDocente.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,51 +17,46 @@ namespace GestionDocente.SecureIAM_API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType<IEnumerable<RoleResponseDto>>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<RoleResponseDto>>> Index()
+        public async Task<ActionResult<IEnumerable<ApplicationRoleResponseDto>>> Index()
         {
             var roles = await _roleService.GetRolesAsync();
 
             return Ok(roles);
         }
 
-        [HttpGet("GetRoleById/{roleId}", Name = "GetRoleById")]
-        [ProducesResponseType<RoleResponseDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<RoleResponseDto>> GetRoleById(string roleId)
+        [HttpGet("{roleId}", Name = "GetRoleById")]
+        public async Task<ActionResult<ApplicationRoleResponseDto>> GetRoleById(string roleId)
         {
-            var user = await _roleService.GetRoleByIdAsync(roleId);
-
-            if (user != null)
+            if (!Guid.TryParse(roleId, out var idGuidParsed))
             {
-                return Ok(user);
+                return BadRequest("El id del rol no es válido.");
             }
-            else
+
+            var roleDb = await _roleService.GetRoleByIdAsync(roleId);
+
+            if (roleDb is null)
             {
                 return NotFound("Rol no encontrado.");
             }
+
+            return Ok(roleDb);
         }
 
-        [HttpGet("GetRoleByName/{roleName}", Name = "GetRoleByName")]
-        [ProducesResponseType<RoleResponseDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<RoleResponseDto>> GetRoleByName(string roleName)
+        [HttpGet("GetRoleByName/{roleName}")]
+
+        public async Task<ActionResult<ApplicationRoleResponseDto>> GetRoleByName(string roleName)
         {
             var user = await _roleService.GetRoleByNameAsync(roleName);
 
-            if (user != null)
+            if (user is null)
             {
-                return Ok(user);
+                return NotFound("Rol no encontrado.");
             }
-            else
-            {
-                return NotFound("Usuario no encontrado.");
-            }
+
+            return Ok(user);
         }
 
-        [HttpPost("RoleExists/{roleName}", Name = "RoleExists")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpPost("RoleExists/{roleName}")]
         public async Task<ActionResult> RoleExists(string roleName)
         {
             var result = await _roleService.RoleExistsAsync(roleName);
@@ -77,59 +71,64 @@ namespace GestionDocente.SecureIAM_API.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("CreateRole")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesErrorResponseType(typeof(ValidationErrorResponse))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreateRole(CreateApplicationRoleRequestDto role)
+        [HttpPost("CreateRole")]        
+        public async Task<IActionResult> CreateRole(CreateApplicationRoleRequestDto role)
         {
-            var result = await _roleService.CreateRoleAsync(role);
+            var roleCreated = await _roleService.CreateRoleAsync(role);
 
-            if (!string.IsNullOrEmpty(result))
-            {
-                return CreatedAtRoute("GetRoleById", new { roleId = result }, role);
-            }
-            else
+            if (roleCreated is null)
             {
                 return BadRequest("Error al crear el rol.");
             }
+
+            return CreatedAtRoute("GetRoleById", new { roleId = roleCreated.Id }, roleCreated);
         }
 
-        [HttpPut("{roleId}")]        
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UpdateRole(string roleId, UpdateApplicationRoleRequestDto role)
+        [HttpPut("UpdateRole/{roleId}")]
+        public async Task<ActionResult> UpdateRole(string roleId, CreateApplicationRoleRequestDto role)
         {
-            var userDB = await _roleService.GetRoleByIdAsync(roleId);
+            if (!Guid.TryParse(roleId, out var idGuidParsed))
+            {
+                return BadRequest("El id del rol no es válido.");
+            }
 
-            if (userDB == null)
+            var roleDb = await _roleService.GetRoleByIdAsync(roleId);
+
+            if (roleDb == null)
             {
                 return NotFound("Rol no encontrado.");
-            }            
-
-            var result = await _roleService.UpdateRoleAsync(roleId, role);
-
-            if (result)
-            {
-                return NoContent();
             }
-            else
+
+            var updateRoleDto = new UpdateApplicationRoleRequestDto
+            {
+                Name = role.Name,
+                Description = role.Description
+            };
+
+            updateRoleDto.SetId(roleId);
+
+
+            var result = await _roleService.UpdateRoleAsync(updateRoleDto);
+
+            if (!result)
             {
                 return BadRequest("Error al modificar el rol.");
             }
+
+            return NoContent();
         }
 
-        [HttpDelete("{roleId}")]        
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpDelete("DeleteRole)/{roleId}")]
         public async Task<ActionResult> DeleteRole(string roleId)
         {
-            var role = await _roleService.GetRoleByIdAsync(roleId);
+            if (!Guid.TryParse(roleId, out var idGuidParsed))
+            {
+                return BadRequest("El id del rol no es válido.");
+            }
 
-            if (role == null)
+            var roleDb = await _roleService.GetRoleByIdAsync(roleId);
+
+            if (roleDb == null)
             {
                 return NotFound("Rol no encontrado.");
             }

@@ -30,6 +30,7 @@
         public ApplicationRole()
         {
             Id = Guid.NewGuid().ToString();
+            ConcurrencyStamp =  Guid.NewGuid().ToString();
         }
     }
 }
