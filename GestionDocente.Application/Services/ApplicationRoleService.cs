@@ -6,6 +6,7 @@ using GestionDocente.Application.Interfaces;
 using GestionDocente.Application.Validators;
 using GestionDocente.Domain.Entities;
 using GestionDocente.Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using ValidationException = GestionDocente.Application.Exceptions.ValidationException;
 
 namespace GestionDocente.Application.Services
@@ -13,33 +14,35 @@ namespace GestionDocente.Application.Services
     public class ApplicationRoleService : IApplicationRoleService
     {
         private readonly IApplicationRoleRepository _roleRepository;
-        private readonly IMapper _mapper;        
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ApplicationRoleService(IApplicationRoleRepository roleRepository, IMapper mapper)
+        public ApplicationRoleService(IApplicationRoleRepository roleRepository, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _roleRepository = roleRepository;
-            _mapper = mapper;            
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<RoleResponseDto>> GetRolesAsync()
+        public async Task<IEnumerable<ApplicationRoleResponseDto>> GetRolesAsync()
         {
             var rolesEntity = await _roleRepository.GetRolesAsync();
 
-            return _mapper.Map<IEnumerable<RoleResponseDto>>(rolesEntity);
+            return _mapper.Map<IEnumerable<ApplicationRoleResponseDto>>(rolesEntity);
         }
         
-        public async Task<RoleResponseDto?> GetRoleByIdAsync(string roleId)
+        public async Task<ApplicationRoleResponseDto?> GetRoleByIdAsync(string roleId)
         {
             var roleEntity = await _roleRepository.GetRoleByIdAsync(roleId);
 
-            return _mapper.Map<RoleResponseDto>(roleEntity);
+            return _mapper.Map<ApplicationRoleResponseDto>(roleEntity);
         }
 
-        public async Task<RoleResponseDto?> GetRoleByNameAsync(string roleName)
+        public async Task<ApplicationRoleResponseDto?> GetRoleByNameAsync(string roleName)
         {
             var roleEntity = await _roleRepository.GetRoleByNameAsync(roleName);
 
-            return _mapper.Map<RoleResponseDto>(roleEntity);
+            return _mapper.Map<ApplicationRoleResponseDto>(roleEntity);
         }
 
         public async Task<bool> RoleExistsAsync(string roleName)
@@ -47,9 +50,8 @@ namespace GestionDocente.Application.Services
             return await _roleRepository.RoleExistsAsync(roleName);
         }
 
-        public async Task<string> CreateRoleAsync(CreateApplicationRoleRequestDto role)
+        public async Task<ApplicationRoleResponseDto> CreateRoleAsync(CreateApplicationRoleRequestDto role)
         {
-            
             var rules = new CreateApplicationRoleRequestDtoValidator(_roleRepository);
 
             var validationResult = await rules.ValidateAsync(role);
@@ -61,17 +63,21 @@ namespace GestionDocente.Application.Services
                 throw new ValidationException(errorValidations);
             }
 
-            var roleEntity = _mapper.Map<ApplicationRole>(role);
+            var applicationRol = new ApplicationRole{
+                Name = role.Name,                               
+                Description = role.Description
+            };           
 
-            return await _roleRepository.CreateRoleAsync(roleEntity);
+            await _roleRepository.CreateRoleAsync(applicationRol);
+
+            await _unitOfWork.CommitAsync();
+
+            return _mapper.Map<ApplicationRoleResponseDto>(applicationRol);
         }
 
-        public async Task<bool> UpdateRoleAsync(string roleId, UpdateApplicationRoleRequestDto role)
+        public async Task<bool> UpdateRoleAsync(UpdateApplicationRoleRequestDto role)
         {
             var validationUpdateRules = new UpdateApplicationRoleRequestDtoValidator(_roleRepository);
-
-            //paso el Id al Dto para que pueda ser validado
-            role.SetId(roleId);
 
             var validationResult = await validationUpdateRules.ValidateAsync(role);
 
@@ -82,17 +88,29 @@ namespace GestionDocente.Application.Services
                 throw new ValidationException(errorValidations);
             }
 
-            var roleEntity = _mapper.Map<ApplicationRole>(role);
+            var roleDB = await _roleRepository.GetRoleByIdAsync(role.GetId()!);
 
-            roleEntity.Id = roleId;
+            _mapper.Map(role, roleDB);
 
-            return await _roleRepository.UpdateRoleAsync(roleEntity);
+            await _roleRepository.UpdateRoleAsync(roleDB!);
+
+           return await _unitOfWork.CommitAsync();
         }
 
         public async Task<bool> DeleteRoleAsync(string roleId)
         {
-            return await _roleRepository.DeleteRoleAsync(roleId);
+            var roleModel = await _roleRepository.GetRoleByIdAsync(roleId);
+
+            if (roleModel == null)
+            {
+                throw new ValidationException(new List<ErrorValidation>
+                {
+                    new ErrorValidation("Id", "Rol no encontrado")
+                });
+            }
+
+            return await _roleRepository.DeleteRoleAsync(roleId);            
         }
-                
+
     }
 }

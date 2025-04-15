@@ -4,7 +4,7 @@ using GestionDocente.Application.Dtos.Request;
 using GestionDocente.Application.Dtos.Response;
 using GestionDocente.API.Models.Errors;
 
-namespace GestionDocente.SecureIAM_API.Controllers
+namespace GestionDocente.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

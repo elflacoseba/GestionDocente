@@ -13,7 +13,7 @@ namespace GestionDocente.Application.Mappers.Profiles
 
             CreateMap<UpdateApplicationRoleRequestDto, ApplicationRole>();
 
-            CreateMap<ApplicationRole, RoleResponseDto>();
+            CreateMap<ApplicationRole, ApplicationRoleResponseDto>();
         }
     }
 }
