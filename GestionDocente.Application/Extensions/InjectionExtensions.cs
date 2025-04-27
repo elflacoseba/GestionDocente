@@ -18,7 +18,7 @@ namespace GestionDocente.Application.Extensions
 
             services.AddScoped<IApplicationUserService, ApplicationUserService>();
             services.AddScoped<IApplicationRoleService, ApplicationRoleService>();
-            services.AddScoped<IEstablecimientoService, EstablecimientoService>();
+            services.AddScoped<IInstitucionService, InstitucionService>();
 
             return services;
         }

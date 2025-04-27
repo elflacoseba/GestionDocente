@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GestionDocente.Infrastructure.Persistences.Context.Configurations
 {
-    public class EstablecimientoConfiguration : IEntityTypeConfiguration<EstablecimientoModel>
+    public class InstitucionConfiguration : IEntityTypeConfiguration<InstitucionModel>
     {
-        public void Configure(EntityTypeBuilder<EstablecimientoModel> builder)
+        public void Configure(EntityTypeBuilder<InstitucionModel> builder)
         {
-            builder.ToTable("Establecimientos");
+            builder.ToTable("Instituciones");
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Nombre)
                 .HasMaxLength(255)

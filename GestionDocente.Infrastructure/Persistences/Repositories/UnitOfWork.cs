@@ -21,7 +21,7 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
 
         public IApplicationRoleRepository ApplicationRoles { get; }
 
-        public IEstablecimientoRepository Establecimientos { get; }
+        public IInstitucionRepository Instituciones { get; }
 
         public UnitOfWork(ApplicationDbContext context, IMapper mapper, UserManager<ApplicationUserModel> userManager, RoleManager<ApplicationRoleModel> roleManager)
 
@@ -33,7 +33,7 @@ namespace GestionDocente.Infrastructure.Persistences.Repositories
 
             ApplicationUsers = new ApplicationUserRepository(_userManager, _mapper);
             ApplicationRoles = new ApplicationRoleRepository(_roleManager, _mapper);
-            Establecimientos = new EstablecimientoRepository(_context, _mapper);
+            Instituciones = new InstitucionesRepository(_context, _mapper);
         }
 
         public void BeginTransaction()

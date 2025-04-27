@@ -23,7 +23,7 @@ namespace GestionDocente.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("GestionDocente.Domain.Models.ApplicationRoleModel", b =>
+            modelBuilder.Entity("GestionDocente.Infrastructure.Models.ApplicationRoleModel", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -53,7 +53,7 @@ namespace GestionDocente.Infrastructure.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("GestionDocente.Domain.Models.ApplicationUserModel", b =>
+            modelBuilder.Entity("GestionDocente.Infrastructure.Models.ApplicationUserModel", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -124,7 +124,7 @@ namespace GestionDocente.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("GestionDocente.Domain.Models.EstablecimientoModel", b =>
+            modelBuilder.Entity("GestionDocente.Infrastructure.Models.InstitucionModel", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -173,7 +173,7 @@ namespace GestionDocente.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Establecimientos", (string)null);
+                    b.ToTable("Instituciones", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -284,7 +284,7 @@ namespace GestionDocente.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("GestionDocente.Domain.Models.ApplicationRoleModel", null)
+                    b.HasOne("GestionDocente.Infrastructure.Models.ApplicationRoleModel", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -293,7 +293,7 @@ namespace GestionDocente.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("GestionDocente.Domain.Models.ApplicationUserModel", null)
+                    b.HasOne("GestionDocente.Infrastructure.Models.ApplicationUserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -302,7 +302,7 @@ namespace GestionDocente.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("GestionDocente.Domain.Models.ApplicationUserModel", null)
+                    b.HasOne("GestionDocente.Infrastructure.Models.ApplicationUserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -311,13 +311,13 @@ namespace GestionDocente.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("GestionDocente.Domain.Models.ApplicationRoleModel", null)
+                    b.HasOne("GestionDocente.Infrastructure.Models.ApplicationRoleModel", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GestionDocente.Domain.Models.ApplicationUserModel", null)
+                    b.HasOne("GestionDocente.Infrastructure.Models.ApplicationUserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -326,7 +326,7 @@ namespace GestionDocente.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("GestionDocente.Domain.Models.ApplicationUserModel", null)
+                    b.HasOne("GestionDocente.Infrastructure.Models.ApplicationUserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -4,7 +4,7 @@
     {
         IApplicationUserRepository ApplicationUsers { get; }
         IApplicationRoleRepository ApplicationRoles { get; }
-        IEstablecimientoRepository Establecimientos { get; }
+        IInstitucionRepository Instituciones { get; }
 
         void BeginTransaction();
         Task<bool> CommitAsync();

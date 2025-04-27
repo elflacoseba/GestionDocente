@@ -13,7 +13,7 @@ namespace GestionDocente.Infrastructure.Persistences.Context
 
         public DbSet<ApplicationUserModel> ApplicationUsers { get; set; }
         public DbSet<ApplicationRoleModel> ApplicationRoles { get; set; }
-        public DbSet<EstablecimientoModel> Establecimientos { get; set; }
+        public DbSet<InstitucionModel> Instituciones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

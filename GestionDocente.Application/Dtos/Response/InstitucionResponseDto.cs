@@ -1,7 +1,9 @@
-﻿namespace GestionDocente.Infrastructure.Models
+﻿namespace GestionDocente.Application.Dtos.Response
 {
-    public class EstablecimientoModel : BaseModel
+    public class InstitucionResponseDto
     {
+        public string Id { get; set; } = string.Empty;
+
         public string Nombre { get; set; } = string.Empty;
 
         public string? Direccion { get; set; } = string.Empty;
