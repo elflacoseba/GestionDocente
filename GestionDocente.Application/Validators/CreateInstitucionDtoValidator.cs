@@ -22,6 +22,12 @@ namespace GestionDocente.Application.Validators
                 .MustAsync(NombreInstitucionDisponible).WithMessage("Ya existe una institución con el mismo nombre");
             });
 
+            RuleFor(x => x.Email)
+               .NotNull().WithMessage("El email no puede ser nulo.")
+               .NotEmpty().WithMessage("El email no puede estar vacío.")
+               .EmailAddress().WithMessage("El texto no tiene el formato válido de una dirección de correo electrónico.")
+               .MaximumLength(50).WithMessage("El email puede contener hasta {MaxLength} caracteres como máximo.");
+
         }
 
         // <summary>
