@@ -1,6 +1,6 @@
-﻿namespace GestionDocente.Domain.Entities
+﻿namespace GestionDocente.Infrastructure.Models
 {
-    public class Establecimiento : BaseEntity
+    public class InstitucionModel : BaseModel
     {
         public string Nombre { get; set; } = string.Empty;
 

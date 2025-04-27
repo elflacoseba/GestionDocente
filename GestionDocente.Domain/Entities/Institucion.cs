@@ -1,9 +1,7 @@
-﻿namespace GestionDocente.Application.Dtos.Response
+﻿namespace GestionDocente.Domain.Entities
 {
-    public class EstablecimientoResponseDto
+    public class Institucion : BaseEntity
     {
-        public string Id { get; set; } = string.Empty;
-
         public string Nombre { get; set; } = string.Empty;
 
         public string? Direccion { get; set; } = string.Empty;

@@ -67,7 +67,7 @@ namespace GestionDocente.Infrastructure.Extensions
 
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddScoped<IApplicationRoleRepository, ApplicationRoleRepository>();
-            services.AddScoped<IEstablecimientoRepository, EstablecimientoRepository>();
+            services.AddScoped<IInstitucionRepository, InstitucionesRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
            

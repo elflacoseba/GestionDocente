@@ -6,16 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GestionDocente.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CreoTablaEstablecimientos : Migration
+    public partial class CreoTablaInstituciones : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase(
-                collation: "Modern_Spanish_CI_AS");
-
             migrationBuilder.CreateTable(
-                name: "Establecimientos",
+                name: "Instituciones",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -32,7 +29,7 @@ namespace GestionDocente.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Establecimientos", x => x.Id);
+                    table.PrimaryKey("PK_Instituciones", x => x.Id);
                 });
         }
 
@@ -40,10 +37,7 @@ namespace GestionDocente.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Establecimientos");
-
-            migrationBuilder.AlterDatabase(
-                oldCollation: "Modern_Spanish_CI_AS");
+                name: "Instituciones");
         }
     }
 }
